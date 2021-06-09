@@ -28,7 +28,7 @@ public interface DBS_Connect {
                                       String sortName);
 
     // create //
-    Reponse create(String idToken, String name, String surname, String phone, String idCompany) throws UsernameNotFoundException;
+    Reponse create(String idToken, String name, String surname, String phone) throws UsernameNotFoundException;
     Connect create_FromMember(String idConnect, DAO_Member dao_member);
 
     // update//

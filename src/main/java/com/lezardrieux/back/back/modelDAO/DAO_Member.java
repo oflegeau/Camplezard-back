@@ -46,7 +46,7 @@ public class DAO_Member {
     //---------------------------------------------------//
 
     @OneToOne(fetch = FetchType.LAZY,
-            mappedBy = "member")
+                mappedBy = "member")
     private DAO_Connect connect;
 
     //---------------------------------------------------//

@@ -83,13 +83,12 @@ public class ConnectController {
     public ResponseEntity<Reponse> create(@RequestBody(required = true) String idToken,
                                           @RequestParam("name") String name,
                                           @RequestParam("surname") String surname,
-                                          @RequestParam("phone") String phone,
-                                          @RequestParam("idCompany") String idCompany) {
+                                          @RequestParam("phone") String phone) {
 
 
         LOGGER.info("POST............/connect/create");
 
-        var rep = dbs_connect.create(idToken, name, surname, phone, idCompany);
+        var rep = dbs_connect.create(idToken, name, surname, phone);
         if (rep == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         return ResponseEntity.status(rep.getHttpStatus()).body(rep);

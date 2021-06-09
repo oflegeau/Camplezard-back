@@ -34,7 +34,8 @@ public class DAO_Connect {
     // ONE TO ONE : 1 -> 1
     //---------------------------------------------------//
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY,
+            optional = false)
     @JoinTable(name = "connect_member",
             joinColumns =
                     {@JoinColumn(name = "connect_id", referencedColumnName = "id")},

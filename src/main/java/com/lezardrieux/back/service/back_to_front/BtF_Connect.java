@@ -133,8 +133,7 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Reponse create(String idToken, String name, String surname, String phone, String idCompany) throws UsernameNotFoundException {
-
+    public Reponse create(String idToken, String name, String surname, String phone) throws UsernameNotFoundException {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
 
@@ -148,6 +147,23 @@ public class BtF_Connect implements DBS_Connect {
                 role = 0x01 | 0x02 | 0x04;
             }
 
+            // Ajout d'un Membre                                 //
+            // ------------------------------------------------- //
+            DAO_Member _TObjMember = new DAO_Member(name,
+                                                    surname,
+                                                    "",
+                                                    new Date(),
+                                                    decodedToken.getEmail(),
+                                                    phone,
+                                                    true,
+                                                    1,
+                                                    new Date(),
+                                                    true,
+                                                    "",
+                                                    "",
+                                                    "");
+            _TObjMember = repo_member.save(_TObjMember);
+
             // Ajout d'un UserAuth                               //
             // ------------------------------------------------- //
             DAO_Connect _TObjConnect = new DAO_Connect( role,
@@ -158,6 +174,7 @@ public class BtF_Connect implements DBS_Connect {
                                                         decodedToken.isEmailVerified(),
                                                         new Date(),
                                                         new Date());
+            _TObjConnect.setMember(_TObjMember);
             _TObjConnect = repo_connect.save(_TObjConnect);
             if (trace) LOGGER.warn(_TObjConnect.toString());
 
@@ -167,34 +184,6 @@ public class BtF_Connect implements DBS_Connect {
             UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
             if (userRecord == null) return new Reponse(HttpStatus.NOT_FOUND, "Impossible de modifier Firebase");
 
-            // ajout d'un membre //
-            // ------------------------------------------------- //
-            if (bfirst) {
-                DAO_Member _TObjMember = new DAO_Member(name,
-                                                        surname,
-                                                        "",
-                                                        new Date(),
-                                                        decodedToken.getEmail(),
-                                                        phone,
-                                                        true,
-                                                        1,
-                                                        new Date(),
-                                                        true,
-                                                        "",
-                                                        "",
-                                                        "");
-                _TObjMember = repo_member.save(_TObjMember);
-
-                // ----------------------------------------- //
-                // gestion des jointures                     //
-                // ----------------------------------------- //
-                _TObjMember.setConnect(_TObjConnect);
-                _TObjMember = repo_member.save(_TObjMember);
-
-                _TObjConnect.setMember(_TObjMember);
-                repo_connect.save(_TObjConnect);
-                if (trace) LOGGER.warn(_TObjMember.toString());
-            }
 
             DAO_ConnectAccess access = new DAO_ConnectAccess(decodedToken.getUid());
 
@@ -217,6 +206,7 @@ public class BtF_Connect implements DBS_Connect {
 
             return new Reponse(HttpStatus.CREATED, _TObjConnect.getSId(), 0L);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             throw new UsernameNotFoundException("BtF_Connect/create/error " + e.getMessage());
         }
     }
