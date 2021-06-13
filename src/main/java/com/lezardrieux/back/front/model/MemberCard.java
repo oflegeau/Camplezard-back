@@ -4,54 +4,35 @@ import java.util.Date;
 
 public class MemberCard extends MemberPhoto {
 
-    private String email;                           // from DataBase - source
-    private String phone;                           // from DataBase - source
-    private boolean connected;                      // build
+    private String email;
+    private String phone;
     private int nation;
     private Date birthday;
-    private boolean sex;                        // from DataBase - source
-    private String address;                     // from DataBase - source
-    private String code;                        // from DataBase - source
-    private String city;                        // from DataBase - source
-    private Connect connect;
+    private boolean sex;
+    private String address;
+    private String code;
+    private String city;
 
     //---------------------------------------------------//
     // CONSTRUCTOR
     //---------------------------------------------------//
 
     public MemberCard() {}
-
-    public MemberCard(String id, String name, String surname, String photo, Date created, String email, String phone, boolean connected, int nation, Date birthday, boolean sex, String address, String code, String city, Connect connect) {
-        super(id, name, surname, photo, created);
+    public MemberCard(String id, String name, String surname, String photo, Date created, boolean connected, String email, String phone, int nation, Date birthday, boolean sex, String address, String code, String city) {
+        super(id, name, surname, photo, created, connected);
         this.email = email;
         this.phone = phone;
-        this.connected = connected;
         this.nation = nation;
         this.birthday = birthday;
         this.sex = sex;
         this.address = address;
         this.code = code;
         this.city = city;
-        this.connect = connect;
     }
 
     //---------------------------------------------------//
     // GET
     //---------------------------------------------------//
-
-    public Member getMember() {
-        return new Member(  this.id,
-                            this.name,
-                            this.surname);
-    }
-
-    public MemberPhoto getMemberPhoto() {
-        return new MemberPhoto( this.id,
-                                this.name,
-                                this.surname,
-                                this.photo,
-                                this.created);
-    }
 
     public String getEmail() {
         return email;
@@ -85,14 +66,6 @@ public class MemberCard extends MemberPhoto {
         return city;
     }
 
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public Connect getConnect() {
-        return connect;
-    }
-
     //---------------------------------------------------//
     // TO STRING  without Jointures
     //---------------------------------------------------//
@@ -100,8 +73,28 @@ public class MemberCard extends MemberPhoto {
     @Override
     public String toString() {
         return "MemberCard{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", nation=" + nation +
                 '}';
+    }
+
+    //---------------------------------------------------//
+    // getFront
+    //---------------------------------------------------//
+
+    public Member getMember() {
+        return new Member(  this.getId(),
+                            this.getName(),
+                            this.getSurname());
+    }
+
+    public MemberPhoto getMemberPhoto() {
+        return new MemberPhoto( this.getId(),
+                                this.getName(),
+                                this.getSurname(),
+                                this.getPhoto(),
+                                this.getCreated(),
+                                this.isConnected());
     }
 }

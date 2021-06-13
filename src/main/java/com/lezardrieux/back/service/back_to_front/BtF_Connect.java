@@ -4,13 +4,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.lezardrieux.back.back.modelDAO.DAO_Connect;
-import com.lezardrieux.back.back.modelDAO.DAO_ConnectAccess;
 import com.lezardrieux.back.back.modelDAO.DAO_ConnectRole;
-import com.lezardrieux.back.back.modelDAO.DAO_Member;
 import com.lezardrieux.back.back.repoDAO.Repo_Connect;
-import com.lezardrieux.back.back.repoDAO.Repo_ConnectAccess;
 import com.lezardrieux.back.back.repoDAO.Repo_ConnectRole;
-import com.lezardrieux.back.back.repoDAO.Repo_Member;
 import com.lezardrieux.back.front.model.Connect;
 import com.lezardrieux.back.front.model.PageConnect;
 import com.lezardrieux.back.front.model.Reponse;
@@ -39,11 +35,7 @@ public class BtF_Connect implements DBS_Connect {
     @Autowired
     Repo_Connect repo_connect;
     @Autowired
-    Repo_ConnectAccess repo_connectAccess;
-    @Autowired
     Repo_ConnectRole repo_connectRole;
-    @Autowired
-    Repo_Member repo_member;
 
     //------------------------------------------------------------------------------//
 
@@ -52,14 +44,23 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     public DAO_Connect getBack(Connect obj) {
-        return new DAO_Connect( obj.getRole(),
+        return new DAO_Connect( obj.getIdFront(),
+                                UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                                obj.getRole(),
+                                obj.isEmailVerified(),
+                                obj.getLastConnexion(),
                                 obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())),
                                 obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())),
                                 obj.getName().substring(0, Math.min(20, obj.getName().length())),
                                 obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
-                                obj.isEmailVerified(),
                                 obj.getCreated(),
-                                obj.getLastConnexion());
+                                obj.getPhoto(),
+                                obj.getNation(),
+                                obj.getBirthday(),
+                                obj.isSex(),
+                                obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())),
+                                obj.getCode().substring(0, Math.min(5, obj.getCode().length())),
+                                obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
     }
 
     //------------------------------------------------------------------------------//
@@ -74,9 +75,25 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
+    public Connect getConnect_ByIdFront(String idFront) {
+        if (idFront.equals("")) return null;
+        Optional<DAO_Connect> option = repo_connect.findByIdFront(idFront);
+        return option.map(DAO_Connect::getConnect).orElse(null);
+    }
+
+    @Override
+    @Transactional
     public DAO_Connect getConnect_DAO_ById(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Connect> option = repo_connect.findById(UUID.fromString(id));
+        return option.orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public DAO_Connect getConnect_DAO_ByIdFront(String idFront) {
+        if (idFront.equals("")) return null;
+        Optional<DAO_Connect> option = repo_connect.findByIdFront(idFront);
         return option.orElse(null);
     }
 
@@ -133,9 +150,9 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Reponse create(String idToken, String name, String surname, String phone) throws UsernameNotFoundException {
+    public Reponse create(String token, String name, String surname, String phone) throws UsernameNotFoundException {
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
             // test si 1ere user -> ADMIN //
             // ------------------------------------------------- //
@@ -144,94 +161,54 @@ public class BtF_Connect implements DBS_Connect {
             if (list.isEmpty()) bfirst = true;
             int role = 0x01;
             if (bfirst) {
-                role = 0x01 | 0x02 | 0x04;
+                role = 0x01 | 0x02 | 0x04 | 0x08;
             }
 
-            // Ajout d'un Membre                                 //
+            // Ajout de Id dans Firebase :                       //
             // ------------------------------------------------- //
-            DAO_Member _TObjMember = new DAO_Member(name,
-                                                    surname,
-                                                    "",
-                                                    new Date(),
-                                                    decodedToken.getEmail(),
-                                                    phone,
-                                                    true,
-                                                    1,
-                                                    new Date(),
-                                                    true,
-                                                    "",
-                                                    "",
-                                                    "");
-            _TObjMember = repo_member.save(_TObjMember);
+            UserRecord.UpdateRequest request = new UserRecord.UpdateRequest(decodedToken.getUid()).setDisplayName(name);
+            UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
+            if (userRecord == null) return new Reponse(HttpStatus.NOT_FOUND, "Impossible de modifier Firebase");
 
+            // ------------------------------------------------- //
             // Ajout d'un UserAuth                               //
             // ------------------------------------------------- //
-            DAO_Connect _TObjConnect = new DAO_Connect( role,
+            DAO_Connect _TObjConnect = new DAO_Connect( decodedToken.getUid(),
+                                                        UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                                                        role,
+                                                        decodedToken.isEmailVerified(),
+                                                        new Date(),
                                                         decodedToken.getEmail(),
                                                         phone,
                                                         name,
                                                         surname,
-                                                        decodedToken.isEmailVerified(),
                                                         new Date(),
-                                                        new Date());
-            _TObjConnect.setMember(_TObjMember);
+                                                        "",
+                                                        1,
+                                                        null,
+                                                        false,
+                                                        "",
+                                                        "",
+                                                        "");
             _TObjConnect = repo_connect.save(_TObjConnect);
             if (trace) LOGGER.warn(_TObjConnect.toString());
 
-            // Ajout de Id dans Firebase :                       //
-            // ------------------------------------------------- //
-            UserRecord.UpdateRequest request = new UserRecord.UpdateRequest(decodedToken.getUid()).setDisplayName(_TObjConnect.getSId());
-            UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
-            if (userRecord == null) return new Reponse(HttpStatus.NOT_FOUND, "Impossible de modifier Firebase");
-
-
-            DAO_ConnectAccess access = new DAO_ConnectAccess(decodedToken.getUid());
-
             // Ajout d'un TRole                                  //
             // ------------------------------------------------- //
-            access.addRole(new DAO_ConnectRole("ROLE_USER"));
+            _TObjConnect.addRole(new DAO_ConnectRole("ROLE_USER"));
 
             // si 1er élément : alors ADMIN et MANAGER //
             if (bfirst) {
-
                 // ajout des roles //
-                access.addRole(new DAO_ConnectRole("ROLE_MASTER"));
-                access.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
-                access.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
+                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
+                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
+                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
             }
 
-            access.setConnect(_TObjConnect);
-            access = repo_connectAccess.save(access);
-            if (trace) LOGGER.warn(access.toString());
-
-            return new Reponse(HttpStatus.CREATED, _TObjConnect.getSId(), 0L);
+            return new Reponse(HttpStatus.CREATED, "", 0L);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new UsernameNotFoundException("BtF_Connect/create/error " + e.getMessage());
-        }
-    }
-
-    @Override
-    @Transactional
-    public Connect create_FromMember(String idConnect, DAO_Member dao_member) {
-        try {
-            DAO_Connect dao_connect = getConnect_DAO_ById(idConnect);
-            if (dao_connect == null) {
-                LOGGER.error("DAO_Connect null/ID = " + idConnect);
-                return null;
-            }
-            if (dao_member != null) {
-                update_RolePost(dao_connect, 0x02, 0);
-
-                dao_connect.setMember(dao_member);
-                dao_connect = repo_connect.save(dao_connect);
-                if (trace) LOGGER.warn(dao_connect.toString());
-            }
-
-            return dao_connect.getConnect();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            return null;
         }
     }
 
@@ -243,15 +220,23 @@ public class BtF_Connect implements DBS_Connect {
     @Transactional
     public Connect update(Connect obj) {
         try {
-            DAO_Connect dao_connect = getConnect_DAO_ById(obj.getId());
+            DAO_Connect dao_connect = getConnect_DAO_ByIdFront(obj.getIdFront());
             if (dao_connect == null) {
-                LOGGER.error("DAO_Connect null/ID = " + obj.getId());
+                LOGGER.error("DAO_Connect null/ID = " + obj.getIdFront());
                return null;
             }
 
+            dao_connect.setEmailVerified(obj.isEmailVerified());
             dao_connect.setName(obj.getName().substring(0, Math.min(20, obj.getName().length())));
             dao_connect.setSurname(obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())));
             dao_connect.setPhone(obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())));
+            dao_connect.setPhoto(obj.getPhoto());
+            dao_connect.setNation(obj.getNation());
+            dao_connect.setBirthday(obj.getBirthday());
+            dao_connect.setSex(obj.isSex());
+            dao_connect.setAddress(obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())));
+            dao_connect.setCode(obj.getCode().substring(0, Math.min(5, obj.getCode().length())));
+            dao_connect.setCity(obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
 
             dao_connect = repo_connect.save(dao_connect);
             if (trace) LOGGER.warn(dao_connect.toString());
@@ -279,6 +264,7 @@ public class BtF_Connect implements DBS_Connect {
 
             DAO_Connect _TObj = _option.get();
             _TObj.setLastConnexion(new Date());
+            _TObj.setEmailVerified(true);
             _TObj = repo_connect.save(_TObj);
 
             if (trace) LOGGER.warn(_TObj.toString());
@@ -292,11 +278,11 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Connect update_Role(String idConnect, int newRole) {
+    public Connect update_Role(String id, int newRole) {
         try {
-            DAO_Connect dao_connect = getConnect_DAO_ById(idConnect);
+            DAO_Connect dao_connect = getConnect_DAO_ById(id);
             if (dao_connect == null) {
-                LOGGER.error("DAO_Connect null/ID = " + idConnect);
+                LOGGER.error("DAO_Connect null/ID = " + id);
                 return null;
             }
 
@@ -306,13 +292,23 @@ public class BtF_Connect implements DBS_Connect {
 
             switch (newRole) {
 
+                case 4:
+                    if ((role & 0x08) != 0x08) roleAdd |= 0x08;
+                    if ((role & 0x04) != 0x04) roleAdd |= 0x04;
+                    if ((role & 0x02) != 0x02) roleAdd |= 0x02;
+                    if ((role & 0x01) != 0x01) roleAdd |= 0x01;
+                    break;
+
                 case 3:
+                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
+
                     if ((role & 0x04) != 0x04) roleAdd |= 0x04;
                     if ((role & 0x02) != 0x02) roleAdd |= 0x02;
                     if ((role & 0x01) != 0x01) roleAdd |= 0x01;
                     break;
 
                 case 2:
+                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
 
                     if ((role & 0x02) != 0x02) roleAdd |= 0x02;
@@ -320,6 +316,7 @@ public class BtF_Connect implements DBS_Connect {
                     break;
 
                 case 1:
+                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
                     if ((role & 0x02) == 0x02) roleDel |= 0x02;
 
@@ -342,18 +339,12 @@ public class BtF_Connect implements DBS_Connect {
         try {
             int role = dao_connect.getRole();
 
-            DAO_ConnectAccess dao_connectAccess = repo_connectAccess.findByConnect_Id(UUID.fromString(dao_connect.getSId()));
-            if (dao_connectAccess == null) {
-                LOGGER.error("DAO_ConnectAccess null/ID = " + dao_connect.getSId());
-                return null;
-            }
-
             // suppression de roles //
             if (roleDel != 0) {
                 List<DAO_ConnectRole> rolesToDelete = new ArrayList<>();
-                for (DAO_ConnectRole _Objrole : dao_connectAccess.getRoles()) {
+                for (DAO_ConnectRole _Objrole : dao_connect.getRoles()) {
                     if ((((roleDel & 0x01) == 0x01) && _Objrole.getRole().equals("ROLE_USER")) ||
-                            (((roleDel & 0x02) == 0x02) && _Objrole.getRole().equals("ROLE_MASTER")) ||
+                            (((roleDel & 0x02) == 0x02) && _Objrole.getRole().equals("ROLE_MEMBER")) ||
                             (((roleDel & 0x04) == 0x04) && _Objrole.getRole().equals("ROLE_MANAGER")) ||
                             (((roleDel & 0x08) == 0x08) && _Objrole.getRole().equals("ROLE_ADMIN"))) {
 
@@ -364,7 +355,7 @@ public class BtF_Connect implements DBS_Connect {
                 }
 
                 for (DAO_ConnectRole _Objrole : rolesToDelete) {
-                    dao_connectAccess.removeRole(_Objrole);
+                    dao_connect.removeRole(_Objrole);
                 }
 
                 role ^= roleDel;
@@ -374,13 +365,16 @@ public class BtF_Connect implements DBS_Connect {
             if (roleAdd != 0) {
 
                 if ((roleAdd & 0x01) == 0x01) {
-                    dao_connectAccess.addRole(new DAO_ConnectRole("ROLE_USER"));
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_USER"));
                 }
                 if ((roleAdd & 0x02) == 0x02) {
-                    dao_connectAccess.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
                 }
                 if ((roleAdd & 0x04) == 0x04) {
-                    dao_connectAccess.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
+                }
+                if ((roleAdd & 0x08) == 0x08) {
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
                 }
 
                 role |= roleAdd;
@@ -389,10 +383,7 @@ public class BtF_Connect implements DBS_Connect {
             dao_connect.setRole(role);
             dao_connect = repo_connect.save(dao_connect);
 
-            dao_connectAccess.setConnect(dao_connect);
-            dao_connectAccess = repo_connectAccess.save(dao_connectAccess);
-
-            if (trace) LOGGER.warn(dao_connectAccess.toString());
+            if (trace) LOGGER.warn(dao_connect.toString());
             return dao_connect.getConnect();
         } catch (Exception e) {
             return null;
@@ -405,30 +396,26 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Reponse delete(String idConnect)  {
+    public Reponse delete(String idFront)  {
 
-        if (idConnect.equals(""))
+        if (idFront.equals(""))
             return new Reponse(HttpStatus.NOT_FOUND, "ERROR delete object null");
 
         try {
-            DAO_ConnectAccess dao_connectAccess = repo_connectAccess.findByConnect_Id(UUID.fromString(idConnect));
-            if (dao_connectAccess == null)
+            DAO_Connect dao_connect = getConnect_DAO_ByIdFront(idFront);
+            if (dao_connect == null)
                 return new Reponse(HttpStatus.NOT_FOUND,"BtF_Connect/delete/error");
 
             // delete Firebase //
-            FirebaseAuth.getInstance().deleteUser(dao_connectAccess.getId());
+            FirebaseAuth.getInstance().deleteUser(dao_connect.getIdFront());
 
             // supprimer le role de Membre //
-            update_Role(idConnect, 1);
-
-            // delete TAccess //
-            dao_connectAccess.setConnect(null);
-            repo_connectAccess.deleteById(dao_connectAccess.getId());
+            update_Role(dao_connect.getSId(), 1);
 
             // delete TConnect //
-            repo_connect.deleteById(UUID.fromString(idConnect));
+            repo_connect.deleteById(dao_connect.getId());
 
-            return new Reponse(HttpStatus.OK, idConnect, 0L);
+            return new Reponse(HttpStatus.OK, idFront, 0L);
         } catch (Exception e) {
             return new Reponse(HttpStatus.NOT_FOUND,"BtF_Connect/delete/error " + e.getMessage());
         }

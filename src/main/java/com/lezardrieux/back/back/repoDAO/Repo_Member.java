@@ -12,6 +12,5 @@ import java.util.UUID;
 public interface Repo_Member extends JpaRepository<DAO_Member, UUID> {
 
     Page<DAO_Member> findAll( Pageable pageable);
-
     Page<DAO_Member> findAllByNationEquals(int nation,  Pageable pageable);
 }

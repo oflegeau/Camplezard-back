@@ -4,29 +4,24 @@ import java.util.Date;
 
 public class MemberPhoto extends Member {
 
-    String photo;                           // from DataBase - source
-    Date created;                           // from DataBase - source
+    private String photo;                           // from DataBase - source
+    private Date created;                           // from DataBase - source
+    private boolean connected;              // build
 
     //---------------------------------------------------//
     // CONSTRUCTOR
     //---------------------------------------------------//
 
     public MemberPhoto() {}
-    public MemberPhoto(String id, String name, String surname, String photo, Date created) {
+    public MemberPhoto(String id, String name, String surname, String photo, Date created, boolean connected) {
         super(id, name, surname);
         this.photo = photo;
         this.created = created;
+        this.connected = connected;
     }
-
     //---------------------------------------------------//
     // GET
     //---------------------------------------------------//
-
-    public Member getMember() {
-        return new Member(  this.id,
-                            this.name,
-                            this.surname);
-    }
 
     public String getPhoto() {
         return photo;
@@ -36,6 +31,10 @@ public class MemberPhoto extends Member {
         return created;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     //---------------------------------------------------//
     // TO STRING  without Jointures
     //---------------------------------------------------//
@@ -43,9 +42,20 @@ public class MemberPhoto extends Member {
     @Override
     public String toString() {
         return "MemberPhoto{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
+                "photo='" + photo + '\'' +
+                ", created=" + created +
+                ", connected=" + connected +
                 '}';
     }
+
+    //---------------------------------------------------//
+    // getFront
+    //---------------------------------------------------//
+
+    public Member getMember() {
+        return new Member(  this.getId(),
+                            this.getName(),
+                            this.getSurname());
+    }
+
 }

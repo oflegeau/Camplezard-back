@@ -30,8 +30,9 @@ public class BackApplication {
 
     public static final boolean trace = true;
 
-    public static final int ROLE_ADMIN = 3;
-    public static final int ROLE_MANAGER = 2;
+    public static final int ROLE_ADMIN = 4;
+    public static final int ROLE_MANAGER = 3;
+    public static final int ROLE_MEMBER = 2;
     public static final int ROLE_USER = 1;
 
 }

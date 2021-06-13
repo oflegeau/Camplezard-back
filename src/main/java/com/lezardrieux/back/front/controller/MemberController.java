@@ -86,19 +86,6 @@ public class MemberController {
         return ResponseEntity.status(rep.getHttpStatus()).body(rep);
     }
 
-    @PostMapping(value = "/create/connect/{id}")
-    @PreAuthorize(value = "hasRole('ADMIN')")
-    public ResponseEntity<Connect> createConnect(@PathVariable String id, @RequestBody(required = true) MemberCard obj) {
-
-        LOGGER.info("POST............/member/create/connect/" + id);
-
-        var entity = dbs_connect.create_FromMember( id, dbs_member.getBack(obj));
-        if (entity == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
-    }
-
-
     // ---------------------------------------------------------------------------------------------- //
     // ---------------------------------------------------------------------------------------------- //
     //

@@ -22,7 +22,7 @@ public class DAO_ConnectRole {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    private DAO_ConnectAccess access;
+    private DAO_Connect connect;
 
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
@@ -59,12 +59,12 @@ public class DAO_ConnectRole {
     // ONE TO ONE  GETTER SETTER
     //---------------------------------------------------//
 
-    public DAO_ConnectAccess getAccess() {
-        return access;
+    public DAO_Connect getConnect() {
+        return connect;
     }
 
-    public DAO_ConnectRole setAccess(DAO_ConnectAccess access) {
-        this.access = access;
+    public DAO_ConnectRole setConnect(DAO_Connect connect) {
+        this.connect = connect;
         return this;
     }
 

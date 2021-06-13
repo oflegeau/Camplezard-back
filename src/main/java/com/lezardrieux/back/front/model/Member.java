@@ -2,9 +2,9 @@ package com.lezardrieux.back.front.model;
 
 public class Member implements Comparable<Member>  {
 
-    String id;
-    String name;
-    String surname;
+    private String id;
+    private String name;
+    private String surname;
 
     //---------------------------------------------------//
     // CONSTRUCTOR

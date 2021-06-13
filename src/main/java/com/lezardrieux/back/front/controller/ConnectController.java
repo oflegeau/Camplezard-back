@@ -80,7 +80,7 @@ public class ConnectController {
     // ---------------------------------------------------------------------------------------------- //
 
     @PostMapping(value = "/create")
-    public ResponseEntity<Reponse> create(@RequestBody(required = true) String idToken,
+    public ResponseEntity<Reponse> create(@RequestBody(required = true) String token,
                                           @RequestParam("name") String name,
                                           @RequestParam("surname") String surname,
                                           @RequestParam("phone") String phone) {
@@ -88,7 +88,7 @@ public class ConnectController {
 
         LOGGER.info("POST............/connect/create");
 
-        var rep = dbs_connect.create(idToken, name, surname, phone);
+        var rep = dbs_connect.create(token, name, surname, phone);
         if (rep == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         return ResponseEntity.status(rep.getHttpStatus()).body(rep);

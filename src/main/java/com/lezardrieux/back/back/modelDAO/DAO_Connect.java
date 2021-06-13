@@ -1,9 +1,12 @@
 package com.lezardrieux.back.back.modelDAO;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lezardrieux.back.front.model.Connect;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,8 +16,17 @@ public class DAO_Connect {
     @Id
     @GeneratedValue
     private UUID id;
+    @Column(name = "idFront", length = 38)                         // cqPHSVLUxBUmNWrATF3LkTyRntu2
+    private String idFront;
+    @Column(name = "idMember")                                       // "00000000-0000-0000-0000-000000000000" si pas de member
+    private UUID idMember;
     @Column(name = "role")
     private int role;
+    @Column(name = "email_verified", length = 1, nullable = false)  // email test Firebase
+    private boolean emailVerified;
+    @Column(name = "last_connexion")                                  // last_connexion Firebase
+    private Date lastConnexion;
+
     @Column(name = "email", length = 128, nullable = false)         // email Firebase
     private String email;
     @Column(name = "phone", length = 14)                             // phone Firebase
@@ -23,25 +35,33 @@ public class DAO_Connect {
     private String name;
     @Column(name = "surname", length = 20)
     private String surname;
-    @Column(name = "email_verified", length = 1, nullable = false)  // email test Firebase
-    private boolean emailVerified;
     @Column(name = "created")                                         // created Firebase
     private Date created;
-    @Column(name = "last_connexion")                                  // last_connexion Firebase
-    private Date lastConnexion;
+    @Column(name = "photo", columnDefinition = "TEXT")
+    private String photo;
+    @Column(name = "nation")
+    private int nation;
+    @Column(name = "birthday")
+    private Date birthday;
+    @Column(name = "sex")
+    private boolean sex;
+    @Column(name = "address", length = 128)
+    private String address;
+    @Column(name = "code", length = 5)
+    private String code;
+    @Column(name = "city", length = 30)
+    private String city;
 
     //---------------------------------------------------//
     // ONE TO ONE : 1 -> 1
     //---------------------------------------------------//
+    @OneToMany( mappedBy = "connect",
+                cascade = CascadeType.ALL,
+                fetch = FetchType.LAZY,
+                orphanRemoval = true)
+    @JsonManagedReference
+    private List<DAO_ConnectRole> roles = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY,
-            optional = false)
-    @JoinTable(name = "connect_member",
-            joinColumns =
-                    {@JoinColumn(name = "connect_id", referencedColumnName = "id")},
-            inverseJoinColumns =
-                    {@JoinColumn(name = "member_id", referencedColumnName = "id")})
-    private DAO_Member member;
 
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
@@ -50,27 +70,77 @@ public class DAO_Connect {
     public DAO_Connect() {
     }
 
-    public DAO_Connect(int role, String email, String phone, String name, String surname, boolean emailVerified, Date created, Date lastConnexion) {
+    public DAO_Connect(String idFront, UUID idMember, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
+        this.idFront = idFront;
+        this.idMember = idMember;
         this.role = role;
+        this.emailVerified = emailVerified;
+        this.lastConnexion = lastConnexion;
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.surname = surname;
-        this.emailVerified = emailVerified;
         this.created = created;
-        this.lastConnexion = lastConnexion;
+        this.photo = photo;
+        this.nation = nation;
+        this.birthday = birthday;
+        this.sex = sex;
+        this.address = address;
+        this.code = code;
+        this.city = city;
     }
 
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
 
-    public UUID getId() { return id; }
-    public String getSId() { return id.toString(); }
 
-    public DAO_Connect setId(UUID id) {
-        this.id = id;
-        return this;
+    public UUID getId() {
+        return id;
+    }
+
+    public String getSId() {
+        return id.toString();
+    }
+
+    public String getIdFront() {
+        return idFront;
+    }
+
+    public UUID getIdMember() {
+        return idMember;
+    }
+
+    public String getSIdMember() {
+        return idMember.toString();
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public int getNation() {
+        return nation;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public boolean isSex() {
+        return sex;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     public int getRole() {
@@ -147,16 +217,67 @@ public class DAO_Connect {
         return this;
     }
 
+    public DAO_Connect setIdMember(UUID idMember) {
+        this.idMember = idMember;
+        return this;
+    }
+
+    public DAO_Connect setPhoto(String photo) {
+        this.photo = photo;
+        return this;
+    }
+
+    public DAO_Connect setNation(int nation) {
+        this.nation = nation;
+        return this;
+    }
+
+    public DAO_Connect setBirthday(Date birthday) {
+        this.birthday = birthday;
+        return this;
+    }
+
+    public DAO_Connect setSex(boolean sex) {
+        this.sex = sex;
+        return this;
+    }
+
+    public DAO_Connect setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public DAO_Connect setCode(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public DAO_Connect setCity(String city) {
+        this.city = city;
+        return this;
+    }
+
     //---------------------------------------------------//
     // ONE TO MANY  GETTER SETTER
     //---------------------------------------------------//
 
-    public DAO_Member getMember() {
-        return member;
+    public List<DAO_ConnectRole> getRoles() {
+        return roles;
     }
 
-    public void setMember(DAO_Member member) {
-        this.member = member;
+    public DAO_ConnectRole addRole(DAO_ConnectRole Tobj) {
+        roles.add(Tobj);
+        Tobj.setConnect(this);
+        return Tobj;
+    }
+    public DAO_ConnectRole detachRole(DAO_ConnectRole Tobj) {
+        Tobj.setConnect(null);
+        return Tobj;
+    }
+    public DAO_ConnectRole removeRole(DAO_ConnectRole Tobj) {
+        roles.remove(Tobj);
+        Tobj.setConnect(null);
+        return Tobj;
     }
 
     //---------------------------------------------------//
@@ -179,30 +300,27 @@ public class DAO_Connect {
 
     public Connect getConnect() {
 
-        String idMember = "";
-        String avatar = "";
-        if (this.getMember() != null) {
-            idMember = this.getMember().getSId();
-            avatar = this.getMember().getPhoto();
-        }
-
         int role = 0;
         if ((this.getRole() & 0x01) == 0x01) role = 1;    // user
-        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  manager
-        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  manager + admin
+        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  member
+        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  member + manager
+        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  member + manager + admin
 
-        return new Connect(this.getId().toString(),
+        return new Connect(this.getIdFront(),
                             role,
+                            this.isEmailVerified(),
+                            this.getLastConnexion(),
                             this.getEmail(),
                             this.getPhone(),
                             this.getName(),
                             this.getSurname(),
-                            this.isEmailVerified(),
                             this.getCreated(),
-                            this.getLastConnexion(),
-                            idMember,
-                            avatar);
+                            this.getPhoto(),
+                            this.getNation(),
+                            this.getBirthday(),
+                            this.isSex(),
+                            this.getAddress(),
+                            this.getCode(),
+                            this.getCity());
     }
-
-
 }

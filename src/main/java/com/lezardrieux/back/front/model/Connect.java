@@ -3,44 +3,51 @@ package com.lezardrieux.back.front.model;
 import java.util.Date;
 
 public class Connect {
-    private String id;
+
+    private String idFront;
     private int role;
+    private boolean emailVerified;
+    private Date lastConnexion;
+
     private String email;
     private String phone;
     private String name;
     private String surname;
-    private boolean emailVerified;
     private Date created;
-    private Date lastConnexion;
-    private String idMember;
-    private String avatar;
+    private String photo;
+    private int nation;
+    private Date birthday;
+    private boolean sex;
+    private String address;
+    private String code;
+    private String city;
 
     //---------------------------------------------------//
     // CONSTRUCTOR
     //---------------------------------------------------//
 
     public Connect() { }
-    public Connect(String id, int role, String email, String phone, String name, String surname, boolean emailVerified, Date created, Date lastConnexion, String idMember, String avatar) {
-        this.id = id;
+    public Connect(String idFront, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
+        this.idFront = idFront;
         this.role = role;
+        this.emailVerified = emailVerified;
+        this.lastConnexion = lastConnexion;
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.surname = surname;
-        this.emailVerified = emailVerified;
         this.created = created;
-        this.lastConnexion = lastConnexion;
-        this.idMember = idMember;
-        this.avatar = avatar;
+        this.photo = photo;
+        this.nation = nation;
+        this.birthday = birthday;
+        this.sex = sex;
+        this.address = address;
+        this.code = code;
+        this.city = city;
     }
-
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
-
-    public String getAvatar() {
-        return avatar;
-    }
 
     public int getRole() {
         return role;
@@ -48,14 +55,6 @@ public class Connect {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -86,8 +85,36 @@ public class Connect {
         return lastConnexion;
     }
 
-    public String getIdMember() {
-        return idMember;
+    public String getIdFront() {
+        return idFront;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public int getNation() {
+        return nation;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public boolean isSex() {
+        return sex;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     //---------------------------------------------------//
@@ -97,13 +124,12 @@ public class Connect {
     @Override
     public String toString() {
         return "Connect{" +
-                "id='" + id + '\'' +
+                "idFront='" + idFront + '\'' +
                 ", role=" + role +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", lastConnexion=" + lastConnexion +
-                ", idMember='" + idMember + '\'' +
                 '}';
     }
 }

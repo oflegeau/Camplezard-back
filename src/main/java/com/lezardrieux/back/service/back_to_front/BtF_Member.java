@@ -1,6 +1,5 @@
 package com.lezardrieux.back.service.back_to_front;
 
-import com.lezardrieux.back.back.modelDAO.DAO_Connect;
 import com.lezardrieux.back.back.modelDAO.DAO_Member;
 import com.lezardrieux.back.back.repoDAO.Repo_Connect;
 import com.lezardrieux.back.back.repoDAO.Repo_Member;
@@ -36,13 +35,13 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     public DAO_Member getBack(MemberCard obj) {
-        return new DAO_Member(  obj.getName().substring(0, Math.min(20, obj.getName().length())),
-                                obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
-                                obj.getPhoto(),
-                                obj.getMemberPhoto().getCreated(),
+        return new DAO_Member(  obj.isConnected(),
                                 obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())),
                                 obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())),
-                                obj.isConnected(),
+                                obj.getName().substring(0, Math.min(20, obj.getName().length())),
+                                obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
+                                obj.getMemberPhoto().getCreated(),
+                                obj.getMemberPhoto().getPhoto(),
                                 obj.getNation(),
                                 obj.getBirthday(),
                                 obj.isSex(),
@@ -120,7 +119,6 @@ public class BtF_Member implements DBS_Member {
         return _List;
     }
 
-
     @Override
     @Transactional
     public PageMember getMemberCard_Page(int page,
@@ -182,23 +180,7 @@ public class BtF_Member implements DBS_Member {
             // ----------------------------------------- //
             DAO_Member dao_member = repo_member.save(getBack(obj));
             // ----------------------------------------- //
-            DAO_Connect dao_connect = null;
-            if (obj.getConnect() != null) {
-                dao_connect = dbs_connect.getBack(obj.getConnect());
-                dao_connect = repo_connect.save(dao_connect);
-            }
-            // ----------------------------------------- //
-            // gestion des jointures                     //
-            // ----------------------------------------- //
-            dao_member = repo_member.save(dao_member);
             if (trace) LOGGER.warn(dao_member.toString());
-
-            if (dao_connect != null) {
-                dao_connect.setMember(dao_member);
-                repo_connect.save(dao_connect);
-                if (trace) LOGGER.warn(dao_connect.toString());
-            }
-
             return new Reponse(HttpStatus.CREATED, dao_member.getSId(), 0L);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -226,6 +208,7 @@ public class BtF_Member implements DBS_Member {
             // mise à jour                               //
             // ----------------------------------------- //
             dao_member = dao_member
+                    .setConnected(obj.isConnected())
                     .setName(obj.getName().substring(0, Math.min(20, obj.getName().length())))
                     .setSurname(obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())))
                     .setPhoto(obj.getPhoto())
@@ -233,7 +216,6 @@ public class BtF_Member implements DBS_Member {
                     .setEmail(obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())))
                     .setPhone(obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())))
                     .setNation(obj.getNation())
-                    .setConnected(obj.isConnected())
                     .setAddress(obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())))
                     .setCode(obj.getCode().substring(0, Math.min(5, obj.getCode().length())))
                     .setCity(obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
@@ -278,12 +260,6 @@ public class BtF_Member implements DBS_Member {
             if (dao_member == null) {
                 LOGGER.error("DAO_Member null/ID = " + id);
                 return new Reponse(HttpStatus.NOT_FOUND, "DAO_Member null/ID = " + id);
-            }
-            // ----------------------------------------- //
-            if (dao_member.getConnect() != null) {
-                // supprimer le role de Membre //
-                dbs_connect.update_Role(dao_member.getConnect().getSId(), 1);
-                dao_member.setConnect(null);
             }
             // ----------------------------------------- //
             repo_member.deleteById(UUID.fromString(id));

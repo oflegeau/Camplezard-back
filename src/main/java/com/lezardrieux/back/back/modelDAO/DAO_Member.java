@@ -14,20 +14,21 @@ public class DAO_Member {
     @Id
     @GeneratedValue
     private UUID id;
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
-    @Column(name = "surname", length = 20, nullable = false)
-    private String surname;
-    @Column(name = "photo", columnDefinition = "TEXT")
-    private String photo;
-    @Column(name = "created")
-    private Date created;
-    @Column(name = "email", length = 128, nullable = false)         // email Firebase
-    private String email;
-    @Column(name = "phone", length = 14)
-    private String phone;
     @Column(name = "connected")
     private boolean connected;
+
+    @Column(name = "email", length = 128, nullable = false)         // email Firebase
+    private String email;
+    @Column(name = "phone", length = 14)                             // phone Firebase
+    private String phone;
+    @Column(name = "name", length = 20)
+    private String name;
+    @Column(name = "surname", length = 20)
+    private String surname;
+    @Column(name = "created")                                         // created Firebase
+    private Date created;
+    @Column(name = "photo", columnDefinition = "TEXT")
+    private String photo;
     @Column(name = "nation")
     private int nation;
     @Column(name = "birthday")
@@ -42,27 +43,20 @@ public class DAO_Member {
     private String city;
 
     //---------------------------------------------------//
-    // ONE TO ONE : 1 -> 1
-    //---------------------------------------------------//
-
-    @OneToOne(fetch = FetchType.LAZY,
-                mappedBy = "member")
-    private DAO_Connect connect;
-
-    //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
 
     public DAO_Member() {
     }
-    public DAO_Member(String name, String surname, String photo, Date created, String email, String phone, boolean connected, int nation, Date birthday, boolean sex, String address, String code, String city) {
-        this.name = name;
-        this.surname = surname;
-        this.photo = photo;
-        this.created = created;
+
+    public DAO_Member(boolean connected, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
+        this.connected = connected;
         this.email = email;
         this.phone = phone;
-        this.connected = connected;
+        this.name = name;
+        this.surname = surname;
+        this.created = created;
+        this.photo = photo;
         this.nation = nation;
         this.birthday = birthday;
         this.sex = sex;
@@ -70,42 +64,9 @@ public class DAO_Member {
         this.code = code;
         this.city = city;
     }
-
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
-
-    public Member getMember() {
-        return new Member(  this.id.toString(),
-                                this.name,
-                                this.surname);
-    }
-
-    public MemberPhoto getMemberPhoto() {
-        return new MemberPhoto( this.id.toString(),
-                                this.name,
-                                this.surname,
-                                this.photo,
-                                this.created);
-    }
-
-    public MemberCard getMemberCard() {
-        return new MemberCard(  this.id.toString(),
-                                this.name,
-                                this.surname,
-                                this.photo,
-                                this.created,
-                                this.email,
-                                this.phone,
-                                this.connected,
-                                this.nation,
-                                this.birthday,
-                                this.sex,
-                                this.address,
-                                this.code,
-                                this.city,
-                                this.connect.getConnect());
-    }
 
     public UUID getId() { return id; }
     public String getSId() { return id.toString(); }
@@ -228,25 +189,6 @@ public class DAO_Member {
     }
 
     //---------------------------------------------------//
-    // ONE TO ONE  GETTER SETTER
-    //---------------------------------------------------//
-
-    public DAO_Connect getConnect() {
-        return connect;
-    }
-
-    public void setConnect(DAO_Connect connect) {
-        if (connect == null) {
-            if (this.connect != null) {
-                this.connect.setMember(null);
-            }
-        } else {
-            connect.setMember(this);
-        }
-        this.connect = connect;
-    }
-
-    //---------------------------------------------------//
     // TO STRING  without Jointures
     //---------------------------------------------------//
 
@@ -257,4 +199,41 @@ public class DAO_Member {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    //---------------------------------------------------//
+    // getFront
+    //---------------------------------------------------//
+
+    public Member getMember() {
+        return new Member(  this.id.toString(),
+                            this.name,
+                            this.surname);
+    }
+
+    public MemberPhoto getMemberPhoto() {
+        return new MemberPhoto( this.id.toString(),
+                                this.name,
+                                this.surname,
+                                this.photo,
+                                this.created,
+                                this.isConnected());
+    }
+
+    public MemberCard getMemberCard() {
+        return new MemberCard(  this.id.toString(),
+                                this.name,
+                                this.surname,
+                                this.photo,
+                                this.created,
+                                this.isConnected(),
+                                this.email,
+                                this.phone,
+                                this.nation,
+                                this.birthday,
+                                this.sex,
+                                this.address,
+                                this.code,
+                                this.city);
+    }
+
 }
