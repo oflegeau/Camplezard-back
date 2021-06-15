@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface DBS_Connect {
 
-
     // Front Object //
     Connect getConnect_ById(String id);
     Connect getConnect_ByIdFront(String idFront);
