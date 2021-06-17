@@ -169,10 +169,7 @@ public class BtF_Connect implements DBS_Connect {
             UserRecord.UpdateRequest request = new UserRecord.UpdateRequest(decodedToken.getUid()).setDisplayName(name);
             UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
             if (userRecord == null) return new Reponse(HttpStatus.NOT_FOUND, "Impossible de modifier Firebase");
-     /*       UserRecord.UpdateRequest request1 = new UserRecord.UpdateRequest(decodedToken.getUid()).setPhoneNumber(phone);
-            UserRecord userRecord1 = FirebaseAuth.getInstance().updateUser(request1);
-            if (userRecord1 == null) return new Reponse(HttpStatus.NOT_FOUND, "Impossible de modifier Firebase");
-    */
+
             // ------------------------------------------------- //
             // Ajout d'un UserAuth                               //
             // ------------------------------------------------- //
@@ -203,7 +200,7 @@ public class BtF_Connect implements DBS_Connect {
             // si 1er élément : alors ADMIN et MANAGER //
             if (bfirst) {
                 // ajout des roles //
-                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
+                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_CUSTOMER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
             }

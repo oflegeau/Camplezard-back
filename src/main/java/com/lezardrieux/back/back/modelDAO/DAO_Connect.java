@@ -302,9 +302,9 @@ public class DAO_Connect {
 
         int role = 0;
         if ((this.getRole() & 0x01) == 0x01) role = 1;    // user
-        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  member
-        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  member + manager
-        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  member + manager + admin
+        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  customer
+        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  customer + manager
+        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  customer + manager + admin
 
         return new Connect(this.getIdFront(),
                             role,
