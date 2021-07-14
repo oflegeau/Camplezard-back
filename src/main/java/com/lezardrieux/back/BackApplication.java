@@ -30,9 +30,16 @@ public class BackApplication {
 
     public static final boolean trace = true;
 
-    public static final int ROLE_ADMIN = 4;
-    public static final int ROLE_MANAGER = 3;
-    public static final int ROLE_CUSTOMER = 2;
+    public static final int ROLE_ADMIN = 5;
+    public static final int ROLE_MANAGER = 4;
+    public static final int ROLE_CUSTOMER = 3;
+    public static final int ROLE_MEMBER = 2;
     public static final int ROLE_USER = 1;
 
+    public static final int PLACE_ALL = 0;
+    public static final int PLACE_STATE = 1;
+    public static final int PLACE_OFF = 2;
+    public static final int PLACE_BUSY = 3;
+    public static final int PLACE_BOOKED = 4;
+    public static final int PLACE_FREE = 5;
 }

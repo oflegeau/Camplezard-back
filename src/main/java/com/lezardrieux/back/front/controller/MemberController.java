@@ -32,7 +32,7 @@ public class MemberController {
 
     // MemberList //
     @GetMapping
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasRole('MANAGER')")
     public ResponseEntity<List<Member>> getMembers() {
 
         LOGGER.info("GET............/member");
@@ -42,7 +42,7 @@ public class MemberController {
 
     // MemberList //
     @GetMapping(value = "/photo")
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasRole('MANAGER')")
     public ResponseEntity<List<MemberPhoto>> getMemberPhotos() {
 
         LOGGER.info("GET............/member/photo");
@@ -52,7 +52,7 @@ public class MemberController {
 
     // MemberCard //
     @GetMapping(value = "/page")
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasRole('MANAGER')")
     public ResponseEntity<PageMember> getPageMember(@RequestParam("page") int page,
                                                     @RequestParam("size") int size,
                                                     @RequestParam("typeNation") int typeNation,

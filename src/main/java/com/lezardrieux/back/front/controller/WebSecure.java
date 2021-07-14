@@ -48,6 +48,7 @@ public class WebSecure extends WebSecurityConfigurerAdapter {
                 //  .anyRequest().authenticated()
                 .antMatchers("/connect").authenticated()
                 .antMatchers("/member").authenticated()
+                .antMatchers("/place").authenticated()
                 //  .antMatchers("/test").permitAll()
                 .and()
                 .httpBasic()

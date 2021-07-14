@@ -15,19 +15,14 @@ public class Connect {
     private String surname;
     private Date created;
     private String photo;
-    private int nation;
-    private Date birthday;
-    private boolean sex;
-    private String address;
-    private String code;
-    private String city;
 
     //---------------------------------------------------//
     // CONSTRUCTOR
     //---------------------------------------------------//
 
     public Connect() { }
-    public Connect(String idFront, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
+
+    public Connect(String idFront, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo) {
         this.idFront = idFront;
         this.role = role;
         this.emailVerified = emailVerified;
@@ -38,12 +33,6 @@ public class Connect {
         this.surname = surname;
         this.created = created;
         this.photo = photo;
-        this.nation = nation;
-        this.birthday = birthday;
-        this.sex = sex;
-        this.address = address;
-        this.code = code;
-        this.city = city;
     }
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
@@ -91,30 +80,6 @@ public class Connect {
 
     public String getPhoto() {
         return photo;
-    }
-
-    public int getNation() {
-        return nation;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public boolean isSex() {
-        return sex;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getCity() {
-        return city;
     }
 
     //---------------------------------------------------//

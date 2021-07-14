@@ -18,7 +18,7 @@ public class DAO_Connect {
     private UUID id;
     @Column(name = "idFront", length = 38)                         // cqPHSVLUxBUmNWrATF3LkTyRntu2
     private String idFront;
-    @Column(name = "idMember")                                       // "00000000-0000-0000-0000-000000000000" si pas de member
+    @Column(name = "idMember")                                     // "00000000-0000-0000-0000-000000000000" si pas de member
     private UUID idMember;
     @Column(name = "role")
     private int role;
@@ -39,18 +39,6 @@ public class DAO_Connect {
     private Date created;
     @Column(name = "photo", columnDefinition = "TEXT")
     private String photo;
-    @Column(name = "nation")
-    private int nation;
-    @Column(name = "birthday")
-    private Date birthday;
-    @Column(name = "sex")
-    private boolean sex;
-    @Column(name = "address", length = 128)
-    private String address;
-    @Column(name = "code", length = 5)
-    private String code;
-    @Column(name = "city", length = 30)
-    private String city;
 
     //---------------------------------------------------//
     // ONE TO ONE : 1 -> 1
@@ -62,7 +50,6 @@ public class DAO_Connect {
     @JsonManagedReference
     private List<DAO_ConnectRole> roles = new ArrayList<>();
 
-
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
@@ -70,7 +57,7 @@ public class DAO_Connect {
     public DAO_Connect() {
     }
 
-    public DAO_Connect(String idFront, UUID idMember, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
+    public DAO_Connect(String idFront, UUID idMember, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo) {
         this.idFront = idFront;
         this.idMember = idMember;
         this.role = role;
@@ -82,12 +69,6 @@ public class DAO_Connect {
         this.surname = surname;
         this.created = created;
         this.photo = photo;
-        this.nation = nation;
-        this.birthday = birthday;
-        this.sex = sex;
-        this.address = address;
-        this.code = code;
-        this.city = city;
     }
 
     //---------------------------------------------------//
@@ -113,34 +94,6 @@ public class DAO_Connect {
 
     public String getSIdMember() {
         return idMember.toString();
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public int getNation() {
-        return nation;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public boolean isSex() {
-        return sex;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getCity() {
-        return city;
     }
 
     public int getRole() {
@@ -173,6 +126,10 @@ public class DAO_Connect {
 
     public Date getLastConnexion() {
         return lastConnexion;
+    }
+
+    public String getPhoto() {
+        return photo;
     }
 
     //---------------------------------------------------//
@@ -222,38 +179,18 @@ public class DAO_Connect {
         return this;
     }
 
+    public DAO_Connect setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    public DAO_Connect setIdFront(String idFront) {
+        this.idFront = idFront;
+        return this;
+    }
+
     public DAO_Connect setPhoto(String photo) {
         this.photo = photo;
-        return this;
-    }
-
-    public DAO_Connect setNation(int nation) {
-        this.nation = nation;
-        return this;
-    }
-
-    public DAO_Connect setBirthday(Date birthday) {
-        this.birthday = birthday;
-        return this;
-    }
-
-    public DAO_Connect setSex(boolean sex) {
-        this.sex = sex;
-        return this;
-    }
-
-    public DAO_Connect setAddress(String address) {
-        this.address = address;
-        return this;
-    }
-
-    public DAO_Connect setCode(String code) {
-        this.code = code;
-        return this;
-    }
-
-    public DAO_Connect setCity(String city) {
-        this.city = city;
         return this;
     }
 
@@ -302,9 +239,10 @@ public class DAO_Connect {
 
         int role = 0;
         if ((this.getRole() & 0x01) == 0x01) role = 1;    // user
-        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  customer
-        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  customer + manager
-        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  customer + manager + admin
+        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  member
+        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  member  +  customer
+        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  member +  customer + manager
+        if ((this.getRole() & 0x10) == 0x10) role = 5;    // user +  member  +  customer + manager + admin
 
         return new Connect(this.getIdFront(),
                             role,
@@ -315,12 +253,6 @@ public class DAO_Connect {
                             this.getName(),
                             this.getSurname(),
                             this.getCreated(),
-                            this.getPhoto(),
-                            this.getNation(),
-                            this.getBirthday(),
-                            this.isSex(),
-                            this.getAddress(),
-                            this.getCode(),
-                            this.getCity());
+                            this.getPhoto());
     }
 }

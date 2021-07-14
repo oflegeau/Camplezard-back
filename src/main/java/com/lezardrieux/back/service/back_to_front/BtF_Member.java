@@ -136,6 +136,11 @@ public class BtF_Member implements DBS_Member {
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 59);
 
+        int[] status = {0, 1, 2};
+        status[0] = repo_member.findAll().size();
+        status[1] = 0;
+        status[2] = 0;
+
         Pageable pageable = null;
         if (sortAsc)
             pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc(sortName)));
@@ -164,7 +169,8 @@ public class BtF_Member implements DBS_Member {
                                 _Page.isLast(),
                                 _Page.getSort().isSorted(),
                                 _Page.getTotalElements(),
-                                _Page.getTotalPages());
+                                _Page.getTotalPages(),
+                                status);
     }
 
     //------------------------------------------------------------------------------//

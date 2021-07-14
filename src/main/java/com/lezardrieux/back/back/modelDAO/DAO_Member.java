@@ -1,5 +1,6 @@
 package com.lezardrieux.back.back.modelDAO;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lezardrieux.back.front.model.Member;
 import com.lezardrieux.back.front.model.MemberCard;
 import com.lezardrieux.back.front.model.MemberPhoto;
@@ -43,6 +44,16 @@ public class DAO_Member {
     private String city;
 
     //---------------------------------------------------//
+    // ONE TO ONE : 1 -> 1
+    //---------------------------------------------------//
+    @OneToMany( mappedBy = "member",
+                cascade = CascadeType.ALL,
+                fetch = FetchType.LAZY,
+                orphanRemoval = true)
+    @JsonManagedReference
+    private List<DAO_TimeSlot> slots = new ArrayList<>();
+
+    //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
 
@@ -64,6 +75,7 @@ public class DAO_Member {
         this.code = code;
         this.city = city;
     }
+
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
@@ -186,6 +198,37 @@ public class DAO_Member {
     public DAO_Member setCity(String city) {
         this.city = city;
         return this;
+    }
+
+    public DAO_Member setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    //---------------------------------------------------//
+
+    public List<DAO_TimeSlot> getSlots() {
+        return slots;
+    }
+
+    public DAO_Member setSlots(List<DAO_TimeSlot> slots) {
+        this.slots = slots;
+        return this;
+    }
+
+    public DAO_TimeSlot addSlot(DAO_TimeSlot Tobj) {
+        slots.add(Tobj);
+        Tobj.setMember(this);
+        return Tobj;
+    }
+    public DAO_TimeSlot detachSlot(DAO_TimeSlot Tobj) {
+        Tobj.setMember(null);
+        return Tobj;
+    }
+    public DAO_TimeSlot removeSlot(DAO_TimeSlot Tobj) {
+        slots.remove(Tobj);
+        Tobj.setMember(null);
+        return Tobj;
     }
 
     //---------------------------------------------------//

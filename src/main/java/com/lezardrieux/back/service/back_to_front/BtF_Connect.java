@@ -54,13 +54,7 @@ public class BtF_Connect implements DBS_Connect {
                                 obj.getName().substring(0, Math.min(20, obj.getName().length())),
                                 obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
                                 obj.getCreated(),
-                                obj.getPhoto(),
-                                obj.getNation(),
-                                obj.getBirthday(),
-                                obj.isSex(),
-                                obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())),
-                                obj.getCode().substring(0, Math.min(5, obj.getCode().length())),
-                                obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
+                                obj.getPhoto());
     }
 
     //------------------------------------------------------------------------------//
@@ -161,7 +155,7 @@ public class BtF_Connect implements DBS_Connect {
             if (list.isEmpty()) bfirst = true;
             int role = 0x01;
             if (bfirst) {
-                role = 0x01 | 0x02 | 0x04 | 0x08;
+                role = 0x01 | 0x02 | 0x04 | 0x08 | 0x10;
             }
 
             // Ajout de Id dans Firebase :                       //
@@ -182,14 +176,7 @@ public class BtF_Connect implements DBS_Connect {
                                                         phone,
                                                         name,
                                                         surname,
-                                                        new Date(),
-                                                        "",
-                                                        1,
-                                                        null,
-                                                        false,
-                                                        "",
-                                                        "",
-                                                        "");
+                                                        new Date(), "");
             _TObjConnect = repo_connect.save(_TObjConnect);
             if (trace) LOGGER.warn(_TObjConnect.toString());
 
@@ -200,6 +187,7 @@ public class BtF_Connect implements DBS_Connect {
             // si 1er élément : alors ADMIN et MANAGER //
             if (bfirst) {
                 // ajout des roles //
+                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_CUSTOMER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
@@ -226,17 +214,11 @@ public class BtF_Connect implements DBS_Connect {
                return null;
             }
 
+            dao_connect.setPhoto(obj.getPhoto());
             dao_connect.setEmailVerified(obj.isEmailVerified());
             dao_connect.setName(obj.getName().substring(0, Math.min(20, obj.getName().length())));
             dao_connect.setSurname(obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())));
             dao_connect.setPhone(obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())));
-            dao_connect.setPhoto(obj.getPhoto());
-            dao_connect.setNation(obj.getNation());
-            dao_connect.setBirthday(obj.getBirthday());
-            dao_connect.setSex(obj.isSex());
-            dao_connect.setAddress(obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())));
-            dao_connect.setCode(obj.getCode().substring(0, Math.min(5, obj.getCode().length())));
-            dao_connect.setCity(obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
 
             dao_connect = repo_connect.save(dao_connect);
             if (trace) LOGGER.warn(dao_connect.toString());
@@ -291,7 +273,17 @@ public class BtF_Connect implements DBS_Connect {
             int roleDel = 0;
 
             switch (newRole) {
+                case 5:
+                    if ((role & 0x10) != 0x08) roleAdd |= 0x10;
+                    if ((role & 0x08) != 0x08) roleAdd |= 0x08;
+                    if ((role & 0x04) != 0x04) roleAdd |= 0x04;
+                    if ((role & 0x02) != 0x02) roleAdd |= 0x02;
+                    if ((role & 0x01) != 0x01) roleAdd |= 0x01;
+                    break;
+
                 case 4:
+                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
+
                     if ((role & 0x08) != 0x08) roleAdd |= 0x08;
                     if ((role & 0x04) != 0x04) roleAdd |= 0x04;
                     if ((role & 0x02) != 0x02) roleAdd |= 0x02;
@@ -299,6 +291,7 @@ public class BtF_Connect implements DBS_Connect {
                     break;
 
                 case 3:
+                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
                     if ((role & 0x08) == 0x08) roleDel |= 0x08;
 
                     if ((role & 0x04) != 0x04) roleAdd |= 0x04;
@@ -307,6 +300,7 @@ public class BtF_Connect implements DBS_Connect {
                     break;
 
                 case 2:
+                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
                     if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
 
@@ -315,6 +309,7 @@ public class BtF_Connect implements DBS_Connect {
                     break;
 
                 case 1:
+                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
                     if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
                     if ((role & 0x02) == 0x02) roleDel |= 0x02;
@@ -344,8 +339,9 @@ public class BtF_Connect implements DBS_Connect {
                 for (DAO_ConnectRole _Objrole : dao_connect.getRoles()) {
                     if ((((roleDel & 0x01) == 0x01) && _Objrole.getRole().equals("ROLE_USER")) ||
                             (((roleDel & 0x02) == 0x02) && _Objrole.getRole().equals("ROLE_MEMBER")) ||
-                            (((roleDel & 0x04) == 0x04) && _Objrole.getRole().equals("ROLE_MANAGER")) ||
-                            (((roleDel & 0x08) == 0x08) && _Objrole.getRole().equals("ROLE_ADMIN"))) {
+                            (((roleDel & 0x04) == 0x04) && _Objrole.getRole().equals("ROLE_CUSTOMER")) ||
+                            (((roleDel & 0x08) == 0x08) && _Objrole.getRole().equals("ROLE_MANAGER")) ||
+                            (((roleDel & 0x10) == 0x10) && _Objrole.getRole().equals("ROLE_ADMIN"))) {
 
                         if (trace) LOGGER.warn("Del Role:" + _Objrole.toString());
                         repo_connectRole.deleteById(_Objrole.getId());
@@ -370,9 +366,12 @@ public class BtF_Connect implements DBS_Connect {
                     dao_connect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
                 }
                 if ((roleAdd & 0x04) == 0x04) {
-                    dao_connect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_CUSTOMER"));
                 }
                 if ((roleAdd & 0x08) == 0x08) {
+                    dao_connect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
+                }
+                if ((roleAdd & 0x10) == 0x10) {
                     dao_connect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
                 }
 
