@@ -38,14 +38,8 @@ public class DAO_Place {
     private int status;
     @Column(name = "famous")
     private int famous;
-    @Column(name = "avis")
-    private int avis;
     @Column(name = "price")
     private double price;
-    @Column(name = "photo", columnDefinition = "TEXT")
-    private String photo;
-    @Column(name = "video", columnDefinition = "TEXT")
-    private String video;
     @Column(name = "van")
     private boolean van;
     @Column(name = "water")
@@ -61,15 +55,14 @@ public class DAO_Place {
                 fetch = FetchType.LAZY,
                 orphanRemoval = true)
     @JsonManagedReference
-    private List<DAO_TimeSlot> slots = new ArrayList<>();
+    private List<DAO_TimeSlot> timeSlots = new ArrayList<>();
 
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
 
     public DAO_Place() {}
-
-    public DAO_Place(String code, int type, String comment, int line, int zone, int status, int famous, int avis, double price, String photo, String video, boolean van, boolean water, boolean elect) {
+    public DAO_Place(String code, int type, String comment, int line, int zone, int status, int famous, double price, boolean van, boolean water, boolean elect) {
         this.code = code;
         this.type = type;
         this.comment = comment;
@@ -77,10 +70,7 @@ public class DAO_Place {
         this.zone = zone;
         this.status = status;
         this.famous = famous;
-        this.avis = avis;
         this.price = price;
-        this.photo = photo;
-        this.video = video;
         this.van = van;
         this.water = water;
         this.elect = elect;
@@ -144,24 +134,6 @@ public class DAO_Place {
         return this;
     }
 
-    public String getPhoto() {
-        return photo;
-    }
-
-    public DAO_Place setPhoto(String photo) {
-        this.photo = photo;
-        return this;
-    }
-
-    public String getVideo() {
-        return video;
-    }
-
-    public DAO_Place setVideo(String video) {
-        this.video = video;
-        return this;
-    }
-
     public int getType() {
         return type;
     }
@@ -186,15 +158,6 @@ public class DAO_Place {
 
     public DAO_Place setCode(String code) {
         this.code = code;
-        return this;
-    }
-
-    public int getAvis() {
-        return avis;
-    }
-
-    public DAO_Place setAvis(int avis) {
-        this.avis = avis;
         return this;
     }
 
@@ -228,16 +191,16 @@ public class DAO_Place {
     //---------------------------------------------------//
 
     public List<DAO_TimeSlot> getSlots() {
-        return slots;
+        return timeSlots;
     }
 
     public DAO_Place setSlots(List<DAO_TimeSlot> slots) {
-        this.slots = slots;
+        this.timeSlots = slots;
         return this;
     }
 
     public DAO_TimeSlot addSlot(DAO_TimeSlot Tobj) {
-        slots.add(Tobj);
+        timeSlots.add(Tobj);
         Tobj.setPlace(this);
         return Tobj;
     }
@@ -246,7 +209,7 @@ public class DAO_Place {
         return Tobj;
     }
     public DAO_TimeSlot removeSlot(DAO_TimeSlot Tobj) {
-        slots.remove(Tobj);
+        timeSlots.remove(Tobj);
         Tobj.setPlace(null);
         return Tobj;
     }

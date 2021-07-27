@@ -30,10 +30,8 @@ public class BackApplication {
 
     public static final boolean trace = true;
 
-    public static final int ROLE_ADMIN = 5;
-    public static final int ROLE_MANAGER = 4;
-    public static final int ROLE_CUSTOMER = 3;
-    public static final int ROLE_MEMBER = 2;
+    public static final int ROLE_ADMIN = 3;
+    public static final int ROLE_MANAGER = 2;
     public static final int ROLE_USER = 1;
 
     public static final int PLACE_ALL = 0;
@@ -42,4 +40,11 @@ public class BackApplication {
     public static final int PLACE_BUSY = 3;
     public static final int PLACE_BOOKED = 4;
     public static final int PLACE_FREE = 5;
+
+    public static final int VAR_INVOICE_LOCK = 0;
+    public static final int VAR_INVOICE_GEN = 1;
+    public static final int VAR_INVOICE_SENT = 2;
+    public static final int VAR_INVOICE_PAID = 3;
+    public static final double VAR_COEF_NET = 0.78;
+    public static final double VAR_COEF_BOSS = 0.45;
 }

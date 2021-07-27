@@ -13,9 +13,7 @@ public interface Repo_Connect extends JpaRepository<DAO_Connect, UUID> {
     Optional<DAO_Connect> findByIdFront(String id);
     Page<DAO_Connect> findAllByRoleGreaterThanEqual(int i, Pageable pageable);
 
-    // USER       0x01                1
-    // MEMBER     0x02     2   + USER 3
-    // LEADER     0x04     6   + USER 7
-    // MANAGER    0x08    14   + USER 15
-    // ADMIN      0x10                31
+    // USER      0x01                    1
+    // MANAGER   0x02     2   + USER     3
+    // ADMIN     0x04     4   + MANAGER  7
 }

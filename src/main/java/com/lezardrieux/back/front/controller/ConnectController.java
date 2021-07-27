@@ -1,7 +1,6 @@
 package com.lezardrieux.back.front.controller;
 
 import com.lezardrieux.back.front.model.Connect;
-import com.lezardrieux.back.front.model.PageConnect;
 import com.lezardrieux.back.front.model.Reponse;
 import com.lezardrieux.back.service.DBS_Connect;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,23 +34,7 @@ public class ConnectController {
 
         LOGGER.info("GET............/connect");
 
-        return ResponseEntity.status(HttpStatus.OK).body(dbs_connect.getConnect_List_ByAll());
-    }
-
-    @GetMapping(value = "/page")
-    @PreAuthorize(value = "hasRole('ADMIN')")
-    public ResponseEntity<PageConnect> getPage(@RequestParam("page") int page,
-                                               @RequestParam("size") int size,
-                                               @RequestParam("filter") int filter,
-                                               @RequestParam("sortAsc") boolean sortAsc,
-                                               @RequestParam("sortName") String sortName) {
-
-        LOGGER.info("GET............/connect/page");
-
-        var entity = dbs_connect.getConnect_Page_ByAll(page, size, filter, sortAsc, sortName);
-        if (entity == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-
-        return ResponseEntity.status(HttpStatus.OK).body(entity);
+        return ResponseEntity.status(HttpStatus.OK).body(dbs_connect.getList());
     }
 
     @GetMapping(value = "/last")

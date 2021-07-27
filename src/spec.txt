@@ -1,0 +1,111 @@
+Pour le membre= renseignement
+
+Numéro
+Nom
+Prénom
+Adresse
+Pièce d'identité déposée
+date et lieu de naissance
+Profession
+Nationalité
+Campeurs(Adultes)
+Enfants
+Animaux
+Véhicule: Type et Immatriculation
+Emplacements
+Caravane ou tente
+Branchements
+Dates: Entrée et Sortie
+Nombre de nuitées
+Garage mort (NOMBRE DE NUITÉES)
+Observation
+------------------------------------------------------
+Tarif = factu
+Par jour
+
+Adultes = 3,90/jour
+Enfants(-12ans)=1,50/jour
+Animaux=1,10/jour
+Emplacements=5,25/jour (que ça soit caravane ou tente même prix)
+Electricité=3,70/jour (eau gratuit)
+Garage mort (nombre de nuitées)=10,50/jour
+
+
+----------------------------------------------------------
+étoile emplacement
+
+1 étoile:
+63
+55
+71
+54
+53
+53
+1
+2
+51
+
+2 étoiles:
+3
+4
+5
+6
+50
+49
+46
+43
+42
+12
+13
+
+3 étoiles:
+48
+47
+45
+44
+41
+40
+39
+38
+34
+7
+8
+9
+10
+11
+14
+15
+16
+17
+
+
+4 étoiles:
+
+37
+36
+35
+36
+33
+32
+31
+30
+29
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+--------------------------------------------------------
+les emplacement du bas en journée sont à l'ombre
+le matin ça doit être l'inverse
+
+-------------------------------------------
+après 71 -Accueil-Sanitaire homme-vaisselle-Sanitaire femme -terrain de pétanque-jeux enfants
+
+après 55 il y a rienn jusqu'au 54

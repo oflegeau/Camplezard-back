@@ -1,11 +1,9 @@
-package com.lezardrieux.back.service.back_to_front;
+package com.lezardrieux.back.service;
 
 import com.lezardrieux.back.back.modelDAO.DAO_Member;
 import com.lezardrieux.back.back.repoDAO.Repo_Connect;
 import com.lezardrieux.back.back.repoDAO.Repo_Member;
 import com.lezardrieux.back.front.model.*;
-import com.lezardrieux.back.service.DBS_Connect;
-import com.lezardrieux.back.service.DBS_Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,31 +28,59 @@ public class BtF_Member implements DBS_Member {
 
     @Autowired
     DBS_Connect dbs_connect;
+    @Autowired
+    DBS_MemberWith dbs_memberWith;
 
     //------------------------------------------------------------------------------//
 
     @Override
     public DAO_Member getBack(MemberCard obj) {
-        return new DAO_Member(  obj.isConnected(),
+        return new DAO_Member(  obj.getName().substring(0, Math.min(20, obj.getName().length())),
+                                obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
+                                obj.getMemberPhoto().getPhoto(),
+                                obj.getMemberPhoto().getCreated(),
                                 obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())),
                                 obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())),
-                                obj.getName().substring(0, Math.min(20, obj.getName().length())),
-                                obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
-                                obj.getMemberPhoto().getCreated(),
-                                obj.getMemberPhoto().getPhoto(),
                                 obj.getNation(),
                                 obj.getBirthday(),
+                                obj.getBirthdayCity().substring(0, Math.min(30, obj.getBirthdayCity().length())),
+                                obj.getProfession().substring(0, Math.min(30, obj.getProfession().length())),
                                 obj.isSex(),
                                 obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())),
                                 obj.getCode().substring(0, Math.min(5, obj.getCode().length())),
-                                obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
+                                obj.getCity().substring(0, Math.min(30, obj.getCity().length())),
+                                obj.getCarType(),
+                                obj.getCarNumber(),
+                                obj.getComment().substring(0, Math.min(255, obj.getComment().length())));
+    }
+
+    public MemberResa get_MemberResa(DAO_Member obj) {
+        return new MemberResa(  obj.getId().toString(),
+                                obj.getName(),
+                                obj.getSurname(),
+                                obj.getMemberPhoto().getPhoto(),
+                                obj.getMemberPhoto().getCreated(),
+                                obj.getEmail(),
+                                obj.getPhone(),
+                                obj.getNation(),
+                                obj.getBirthday(),
+                                obj.getBirthdayCity(),
+                                obj.getProfession(),
+                                obj.isSex(),
+                                obj.getAddress(),
+                                obj.getCode(),
+                                obj.getCity(),
+                                obj.getCarType(),
+                                obj.getCarNumber(),
+                                obj.getComment(),
+                                null);
     }
 
     //------------------------------------------------------------------------------//
 
     @Override
     @Transactional
-    public Member getMember_ById(String id) {
+    public Member get(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
         return option.map(DAO_Member::getMember).orElse(null);
@@ -62,7 +88,7 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public MemberPhoto getMemberPhoto_ById(String id) {
+    public MemberPhoto get_Photo(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
         return option.map(DAO_Member::getMemberPhoto).orElse(null);
@@ -70,7 +96,7 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public MemberCard getMemberCard_ById(String id) {
+    public MemberCard get_Card(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
         return option.map(DAO_Member::getMemberCard).orElse(null);
@@ -80,7 +106,7 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public DAO_Member getMember_DAO_ById(String id) {
+    public DAO_Member getDAO(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
         return option.orElse(null);
@@ -89,7 +115,7 @@ public class BtF_Member implements DBS_Member {
     //------------------------------------------------------------------------------//
 
     @Override
-    public List<Member> getMember_List_ByJoin(List<DAO_Member> list) {
+    public List<Member> getList(List<DAO_Member> list) {
         List<Member> _List = new ArrayList<>();
         for (DAO_Member _TObj : list) {
             _List.add(_TObj.getMember());
@@ -99,7 +125,7 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public List<Member> getMember_List() {
+    public List<Member> getList() {
         List<DAO_Member> _TList = repo_member.findAll();
         List<Member> _List = new ArrayList<>();
         for (DAO_Member _TObj : _TList) {
@@ -110,7 +136,7 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public List<MemberPhoto> getMemberPhoto_List() {
+    public List<MemberPhoto> getList_Photo() {
         List<DAO_Member> _TList = repo_member.findAll();
         List<MemberPhoto> _List = new ArrayList<>();
         for (DAO_Member _TObj : _TList) {
@@ -121,11 +147,11 @@ public class BtF_Member implements DBS_Member {
 
     @Override
     @Transactional
-    public PageMember getMemberCard_Page(int page,
-                                         int size,
-                                         int typeNation,
-                                         boolean sortAsc,
-                                         String sortName) {
+    public PageMember getPage_Card(int page,
+                                     int size,
+                                     int typeNation,
+                                     boolean sortAsc,
+                                     String sortName) {
 
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.set(Calendar.YEAR, 2099);
@@ -187,7 +213,7 @@ public class BtF_Member implements DBS_Member {
             DAO_Member dao_member = repo_member.save(getBack(obj));
             // ----------------------------------------- //
             if (trace) LOGGER.warn(dao_member.toString());
-            return new Reponse(HttpStatus.CREATED, dao_member.getSId(), 0L);
+            return new Reponse(HttpStatus.CREATED, dao_member.getId().toString(), 0L);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return new Reponse(HttpStatus.INTERNAL_SERVER_ERROR, "BtF_Member/create" + e.getMessage());
@@ -205,7 +231,7 @@ public class BtF_Member implements DBS_Member {
             // ----------------------------------------- //
             // récupération en base avant update         //
             // ----------------------------------------- //
-            DAO_Member dao_member = getMember_DAO_ById(obj.getId());
+            DAO_Member dao_member = getDAO(obj.getId());
             if (dao_member == null) {
                 LOGGER.error("Member null/ID = " + obj.getId());
                 return new Reponse(HttpStatus.NOT_FOUND, "Member null/ID = " + obj.getId());
@@ -214,7 +240,6 @@ public class BtF_Member implements DBS_Member {
             // mise à jour                               //
             // ----------------------------------------- //
             dao_member = dao_member
-                    .setConnected(obj.isConnected())
                     .setName(obj.getName().substring(0, Math.min(20, obj.getName().length())))
                     .setSurname(obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())))
                     .setPhoto(obj.getPhoto())
@@ -222,21 +247,27 @@ public class BtF_Member implements DBS_Member {
                     .setEmail(obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())))
                     .setPhone(obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())))
                     .setNation(obj.getNation())
+                    .setBirthday(obj.getBirthday())
+                    .setBirthdayCity(obj.getBirthdayCity().substring(0, Math.min(30, obj.getBirthdayCity().length())))
+                    .setProfession(obj.getProfession().substring(0, Math.min(30, obj.getProfession().length())))
+                    .setSex(obj.isSex())
                     .setAddress(obj.getAddress().substring(0, Math.min(128, obj.getAddress().length())))
                     .setCode(obj.getCode().substring(0, Math.min(5, obj.getCode().length())))
-                    .setCity(obj.getCity().substring(0, Math.min(30, obj.getCity().length())));
+                    .setCity(obj.getCity().substring(0, Math.min(30, obj.getCity().length())))
+                    .setCarType(obj.getCarType())
+                    .setCarNumber(obj.getCarNumber())
+                    .setComment(obj.getComment().substring(0, Math.min(255, obj.getComment().length())));
 
             // ----------------------------------------- //
             repo_member.save(dao_member);
 
             if (trace) LOGGER.warn(dao_member.toString());
-            return new Reponse(HttpStatus.ACCEPTED, dao_member.getSId(), 0L);
+            return new Reponse(HttpStatus.ACCEPTED, dao_member.getId().toString(), 0L);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return new Reponse(HttpStatus.INTERNAL_SERVER_ERROR, "BtF_Member/update " + e.getMessage());
         }
     }
-
 
     //------------------------------------------------------------------------------//
     // DELETE
@@ -248,7 +279,6 @@ public class BtF_Member implements DBS_Member {
         try {
             for (Iterator<DAO_Member> iter = repo_member.findAll().listIterator(); iter.hasNext(); ) {
                 DAO_Member dao_member = iter.next();
-
                 repo_member.deleteById(dao_member.getId());
                 iter.remove();
             }
@@ -262,7 +292,7 @@ public class BtF_Member implements DBS_Member {
     @Transactional
     public Reponse delete(String id) {
         try {
-            DAO_Member dao_member = getMember_DAO_ById(id);
+            DAO_Member dao_member = getDAO(id);
             if (dao_member == null) {
                 LOGGER.error("DAO_Member null/ID = " + id);
                 return new Reponse(HttpStatus.NOT_FOUND, "DAO_Member null/ID = " + id);

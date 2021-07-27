@@ -31,7 +31,7 @@ public class UserDetailService implements UserDetailsService {
 
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            DAO_Connect dao_connect = dbs_connect.getConnect_DAO_ByIdFront(decodedToken.getUid());
+            DAO_Connect dao_connect = dbs_connect.getDAO_ByIdFront(decodedToken.getUid());
 
             if (dao_connect == null) {
                 LOGGER.warn("loadUserByUsername dao_connect null !");

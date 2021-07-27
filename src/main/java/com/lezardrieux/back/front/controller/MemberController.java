@@ -37,7 +37,7 @@ public class MemberController {
 
         LOGGER.info("GET............/member");
 
-        return ResponseEntity.status(HttpStatus.OK).body(dbs_member.getMember_List());
+        return ResponseEntity.status(HttpStatus.OK).body(dbs_member.getList());
     }
 
     // MemberList //
@@ -47,7 +47,7 @@ public class MemberController {
 
         LOGGER.info("GET............/member/photo");
 
-        return ResponseEntity.status(HttpStatus.OK).body(dbs_member.getMemberPhoto_List());
+        return ResponseEntity.status(HttpStatus.OK).body(dbs_member.getList_Photo());
     }
 
     // MemberCard //
@@ -60,7 +60,7 @@ public class MemberController {
                                                     @RequestParam("sortName") String sortName) {
         LOGGER.info("GET............/member/page");
 
-        var entity = dbs_member.getMemberCard_Page(page, size, typeNation, sortAsc, sortName);
+        var entity = dbs_member.getPage_Card(page, size, typeNation, sortAsc, sortName);
         if (entity == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
         return ResponseEntity.status(HttpStatus.OK).body(entity);

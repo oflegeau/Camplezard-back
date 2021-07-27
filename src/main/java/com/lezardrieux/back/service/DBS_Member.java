@@ -9,25 +9,25 @@ import java.util.UUID;
 public interface DBS_Member {
 
     // Front Object //
-    Member getMember_ById(String id);
-    MemberPhoto getMemberPhoto_ById(String id);
-    MemberCard getMemberCard_ById(String id);
+    Member get(String id);
+    MemberPhoto get_Photo(String id);
+    MemberCard get_Card(String id);
 
     // Back Object //
     DAO_Member getBack(MemberCard obj);
-    DAO_Member getMember_DAO_ById(String id);
+    DAO_Member getDAO(String id);
 
     // Back List of Object //
-    List<Member> getMember_List_ByJoin(List<DAO_Member> list);
-    List<Member> getMember_List();
-    List<MemberPhoto> getMemberPhoto_List();
+    List<Member> getList(List<DAO_Member> list);
+    List<Member> getList();
+    List<MemberPhoto> getList_Photo();
 
     // Front List of Object //
-    PageMember getMemberCard_Page(int page,
-                                  int size,
-                                  int typeNation,
-                                  boolean sortAsc,
-                                  String sortName);
+    PageMember getPage_Card(int page,
+                              int size,
+                              int typeNation,
+                              boolean sortAsc,
+                              String sortName);
 
     // create //
     Reponse create(MemberCard obj);

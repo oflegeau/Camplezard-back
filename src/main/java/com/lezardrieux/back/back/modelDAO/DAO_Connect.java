@@ -18,8 +18,6 @@ public class DAO_Connect {
     private UUID id;
     @Column(name = "idFront", length = 38)                         // cqPHSVLUxBUmNWrATF3LkTyRntu2
     private String idFront;
-    @Column(name = "idMember")                                     // "00000000-0000-0000-0000-000000000000" si pas de member
-    private UUID idMember;
     @Column(name = "role")
     private int role;
     @Column(name = "email_verified", length = 1, nullable = false)  // email test Firebase
@@ -54,12 +52,9 @@ public class DAO_Connect {
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
 
-    public DAO_Connect() {
-    }
-
-    public DAO_Connect(String idFront, UUID idMember, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo) {
+    public DAO_Connect() {}
+    public DAO_Connect(String idFront, int role, boolean emailVerified, Date lastConnexion, String email, String phone, String name, String surname, Date created, String photo) {
         this.idFront = idFront;
-        this.idMember = idMember;
         this.role = role;
         this.emailVerified = emailVerified;
         this.lastConnexion = lastConnexion;
@@ -86,14 +81,6 @@ public class DAO_Connect {
 
     public String getIdFront() {
         return idFront;
-    }
-
-    public UUID getIdMember() {
-        return idMember;
-    }
-
-    public String getSIdMember() {
-        return idMember.toString();
     }
 
     public int getRole() {
@@ -174,11 +161,6 @@ public class DAO_Connect {
         return this;
     }
 
-    public DAO_Connect setIdMember(UUID idMember) {
-        this.idMember = idMember;
-        return this;
-    }
-
     public DAO_Connect setId(UUID id) {
         this.id = id;
         return this;
@@ -239,10 +221,8 @@ public class DAO_Connect {
 
         int role = 0;
         if ((this.getRole() & 0x01) == 0x01) role = 1;    // user
-        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  member
-        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  member  +  customer
-        if ((this.getRole() & 0x08) == 0x08) role = 4;    // user +  member +  customer + manager
-        if ((this.getRole() & 0x10) == 0x10) role = 5;    // user +  member  +  customer + manager + admin
+        if ((this.getRole() & 0x02) == 0x02) role = 2;    // user +  manager
+        if ((this.getRole() & 0x04) == 0x04) role = 3;    // user +  manager  +  admin
 
         return new Connect(this.getIdFront(),
                             role,

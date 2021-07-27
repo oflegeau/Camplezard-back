@@ -15,25 +15,28 @@ public class DAO_Member {
     @Id
     @GeneratedValue
     private UUID id;
-    @Column(name = "connected")
-    private boolean connected;
+
+    @Column(name = "name", length = 20)
+    private String name;
+    @Column(name = "surname", length = 20)
+    private String surname;
+    @Column(name = "photo", columnDefinition = "TEXT")
+    private String photo;
+    @Column(name = "created")                                         // created Firebase
+    private Date created;
 
     @Column(name = "email", length = 128, nullable = false)         // email Firebase
     private String email;
     @Column(name = "phone", length = 14)                             // phone Firebase
     private String phone;
-    @Column(name = "name", length = 20)
-    private String name;
-    @Column(name = "surname", length = 20)
-    private String surname;
-    @Column(name = "created")                                         // created Firebase
-    private Date created;
-    @Column(name = "photo", columnDefinition = "TEXT")
-    private String photo;
     @Column(name = "nation")
     private int nation;
     @Column(name = "birthday")
     private Date birthday;
+    @Column(name = "birthday_city", length = 30)
+    private String birthdayCity;
+    @Column(name = "profession", length = 30)
+    private String profession;
     @Column(name = "sex")
     private boolean sex;
     @Column(name = "address", length = 128)
@@ -42,46 +45,53 @@ public class DAO_Member {
     private String code;
     @Column(name = "city", length = 30)
     private String city;
+    @Column(name = "car_type",length = 20)
+    private String carType;
+    @Column(name = "car_number",length = 10)
+    private String carNumber;
+    @Column(name = "comment", length = 255)
+    private String comment;
 
     //---------------------------------------------------//
     // ONE TO ONE : 1 -> 1
     //---------------------------------------------------//
+
     @OneToMany( mappedBy = "member",
                 cascade = CascadeType.ALL,
                 fetch = FetchType.LAZY,
                 orphanRemoval = true)
     @JsonManagedReference
-    private List<DAO_TimeSlot> slots = new ArrayList<>();
+    private List<DAO_Resa> resas = new ArrayList<>();
 
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
     //---------------------------------------------------//
 
-    public DAO_Member() {
-    }
-
-    public DAO_Member(boolean connected, String email, String phone, String name, String surname, Date created, String photo, int nation, Date birthday, boolean sex, String address, String code, String city) {
-        this.connected = connected;
-        this.email = email;
-        this.phone = phone;
+    public DAO_Member() {}
+    public DAO_Member(String name, String surname, String photo, Date created, String email, String phone, int nation, Date birthday, String birthdayCity, String profession, boolean sex, String address, String code, String city, String carType, String carNumber, String comment) {
         this.name = name;
         this.surname = surname;
-        this.created = created;
         this.photo = photo;
+        this.created = created;
+        this.email = email;
+        this.phone = phone;
         this.nation = nation;
         this.birthday = birthday;
+        this.birthdayCity = birthdayCity;
+        this.profession = profession;
         this.sex = sex;
         this.address = address;
         this.code = code;
         this.city = city;
+        this.carType = carType;
+        this.carNumber = carNumber;
+        this.comment = comment;
     }
-
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
 
     public UUID getId() { return id; }
-    public String getSId() { return id.toString(); }
 
     public String getName() {
         return name;
@@ -134,15 +144,6 @@ public class DAO_Member {
 
     public DAO_Member setCreated(Date created) {
         this.created = created;
-        return this;
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public DAO_Member setConnected(boolean connected) {
-        this.connected = connected;
         return this;
     }
 
@@ -205,28 +206,74 @@ public class DAO_Member {
         return this;
     }
 
-    //---------------------------------------------------//
-
-    public List<DAO_TimeSlot> getSlots() {
-        return slots;
+    public String getBirthdayCity() {
+        return birthdayCity;
     }
 
-    public DAO_Member setSlots(List<DAO_TimeSlot> slots) {
-        this.slots = slots;
+    public DAO_Member setBirthdayCity(String birthdayCity) {
+        this.birthdayCity = birthdayCity;
         return this;
     }
 
-    public DAO_TimeSlot addSlot(DAO_TimeSlot Tobj) {
-        slots.add(Tobj);
+    public String getProfession() {
+        return profession;
+    }
+
+    public DAO_Member setProfession(String profession) {
+        this.profession = profession;
+        return this;
+    }
+
+    public String getCarType() {
+        return carType;
+    }
+
+    public DAO_Member setCarType(String carType) {
+        this.carType = carType;
+        return this;
+    }
+
+    public String getCarNumber() {
+        return carNumber;
+    }
+
+    public DAO_Member setCarNumber(String carNumber) {
+        this.carNumber = carNumber;
+        return this;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public DAO_Member setComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    //---------------------------------------------------//
+
+
+    public List<DAO_Resa> getResas() {
+        return resas;
+    }
+
+    public DAO_Member setResas(List<DAO_Resa> resas) {
+        this.resas = resas;
+        return this;
+    }
+
+    public DAO_Resa addResa(DAO_Resa Tobj) {
+        resas.add(Tobj);
         Tobj.setMember(this);
         return Tobj;
     }
-    public DAO_TimeSlot detachSlot(DAO_TimeSlot Tobj) {
+    public DAO_Resa detachResa(DAO_Resa Tobj) {
         Tobj.setMember(null);
         return Tobj;
     }
-    public DAO_TimeSlot removeSlot(DAO_TimeSlot Tobj) {
-        slots.remove(Tobj);
+    public DAO_Resa removeResa(DAO_Resa Tobj) {
+        resas.remove(Tobj);
         Tobj.setMember(null);
         return Tobj;
     }
@@ -258,8 +305,7 @@ public class DAO_Member {
                                 this.name,
                                 this.surname,
                                 this.photo,
-                                this.created,
-                                this.isConnected());
+                                this.created);
     }
 
     public MemberCard getMemberCard() {
@@ -268,15 +314,19 @@ public class DAO_Member {
                                 this.surname,
                                 this.photo,
                                 this.created,
-                                this.isConnected(),
                                 this.email,
                                 this.phone,
                                 this.nation,
                                 this.birthday,
+                                this.birthdayCity,
+                                this.profession,
                                 this.sex,
                                 this.address,
                                 this.code,
-                                this.city);
+                                this.city,
+                                this.carType,
+                                this.carNumber,
+                                this.comment);
     }
 
 }

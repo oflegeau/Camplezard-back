@@ -31,13 +31,13 @@ public class PlaceController {
     // ---------------------------------------------------------------------------------------------- //
     // ---------------------------------------------------------------------------------------------- //
 
-    // MemberList //
+    // PagePlace //
     @GetMapping(value = "/page")
     @PreAuthorize(value = "hasRole('USER')")
     public ResponseEntity<PagePlace> getPage(@RequestParam("zone") int zone) {
 
         LOGGER.info("GET............/place/page");
 
-        return ResponseEntity.status(HttpStatus.OK).body(dbs_place.getPlace_Page(zone));
+        return ResponseEntity.status(HttpStatus.OK).body(dbs_place.getPage(zone));
     }
 }

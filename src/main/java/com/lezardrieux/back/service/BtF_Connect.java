@@ -1,4 +1,4 @@
-package com.lezardrieux.back.service.back_to_front;
+package com.lezardrieux.back.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
@@ -8,14 +8,9 @@ import com.lezardrieux.back.back.modelDAO.DAO_ConnectRole;
 import com.lezardrieux.back.back.repoDAO.Repo_Connect;
 import com.lezardrieux.back.back.repoDAO.Repo_ConnectRole;
 import com.lezardrieux.back.front.model.Connect;
-import com.lezardrieux.back.front.model.PageConnect;
 import com.lezardrieux.back.front.model.Reponse;
 import com.lezardrieux.back.service.DBS_Connect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +40,6 @@ public class BtF_Connect implements DBS_Connect {
     @Override
     public DAO_Connect getBack(Connect obj) {
         return new DAO_Connect( obj.getIdFront(),
-                                UUID.fromString("00000000-0000-0000-0000-000000000000"),
                                 obj.getRole(),
                                 obj.isEmailVerified(),
                                 obj.getLastConnexion(),
@@ -61,7 +55,7 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Connect getConnect_ById(String id) {
+    public Connect get(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Connect> option = repo_connect.findById(UUID.fromString(id));
         return option.map(DAO_Connect::getConnect).orElse(null);
@@ -69,7 +63,7 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public Connect getConnect_ByIdFront(String idFront) {
+    public Connect get_ByIdFront(String idFront) {
         if (idFront.equals("")) return null;
         Optional<DAO_Connect> option = repo_connect.findByIdFront(idFront);
         return option.map(DAO_Connect::getConnect).orElse(null);
@@ -77,7 +71,7 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public DAO_Connect getConnect_DAO_ById(String id) {
+    public DAO_Connect getDAO(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Connect> option = repo_connect.findById(UUID.fromString(id));
         return option.orElse(null);
@@ -85,7 +79,7 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public DAO_Connect getConnect_DAO_ByIdFront(String idFront) {
+    public DAO_Connect getDAO_ByIdFront(String idFront) {
         if (idFront.equals("")) return null;
         Optional<DAO_Connect> option = repo_connect.findByIdFront(idFront);
         return option.orElse(null);
@@ -95,47 +89,13 @@ public class BtF_Connect implements DBS_Connect {
 
     @Override
     @Transactional
-    public List<Connect> getConnect_List_ByAll() {
+    public List<Connect> getList() {
         List<DAO_Connect> _TList = repo_connect.findAll();
         List<Connect> _List = new ArrayList<>();
         for (DAO_Connect _TObj : _TList) {
             _List.add(_TObj.getConnect());
         }
         return _List;
-    }
-
-    //------------------------------------------------------------------------------//
-
-    @Override
-    @Transactional
-    public PageConnect getConnect_Page_ByAll(int page,
-                                             int size,
-                                             int filter,
-                                             boolean sortAsc,
-                                             String sortName) {
-        Pageable pageable = null;
-        if (sortAsc)
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc(sortName)));
-        else pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortName)));
-
-        Page<DAO_Connect> _Page = repo_connect.findAllByRoleGreaterThanEqual(filter, pageable);
-
-        List<DAO_Connect> _TList = _Page.getContent();
-        List<Connect> _List = new ArrayList<>();
-
-        for (DAO_Connect _TObj : _TList) {
-            _List.add(_TObj.getConnect());
-        }
-
-        return new PageConnect( _List,
-                                _Page.getNumber(),
-                                _Page.getNumberOfElements(),
-                                _Page.isEmpty(),
-                                _Page.isFirst(),
-                                _Page.isLast(),
-                                _Page.getSort().isSorted(),
-                                _Page.getTotalElements(),
-                                _Page.getTotalPages());
     }
 
     //------------------------------------------------------------------------------//
@@ -155,7 +115,7 @@ public class BtF_Connect implements DBS_Connect {
             if (list.isEmpty()) bfirst = true;
             int role = 0x01;
             if (bfirst) {
-                role = 0x01 | 0x02 | 0x04 | 0x08 | 0x10;
+                role = 0x01 | 0x02 | 0x04;
             }
 
             // Ajout de Id dans Firebase :                       //
@@ -168,7 +128,6 @@ public class BtF_Connect implements DBS_Connect {
             // Ajout d'un UserAuth                               //
             // ------------------------------------------------- //
             DAO_Connect _TObjConnect = new DAO_Connect( decodedToken.getUid(),
-                                                        UUID.fromString("00000000-0000-0000-0000-000000000000"),
                                                         role,
                                                         decodedToken.isEmailVerified(),
                                                         new Date(),
@@ -187,8 +146,6 @@ public class BtF_Connect implements DBS_Connect {
             // si 1er élément : alors ADMIN et MANAGER //
             if (bfirst) {
                 // ajout des roles //
-                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
-                _TObjConnect.addRole(new DAO_ConnectRole("ROLE_CUSTOMER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
                 _TObjConnect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
             }
@@ -208,7 +165,7 @@ public class BtF_Connect implements DBS_Connect {
     @Transactional
     public Connect update(Connect obj) {
         try {
-            DAO_Connect dao_connect = getConnect_DAO_ByIdFront(obj.getIdFront());
+            DAO_Connect dao_connect = getDAO_ByIdFront(obj.getIdFront());
             if (dao_connect == null) {
                 LOGGER.error("DAO_Connect null/ID = " + obj.getIdFront());
                return null;
@@ -262,7 +219,7 @@ public class BtF_Connect implements DBS_Connect {
     @Transactional
     public Connect update_Role(String id, int newRole) {
         try {
-            DAO_Connect dao_connect = getConnect_DAO_ById(id);
+            DAO_Connect dao_connect = getDAO(id);
             if (dao_connect == null) {
                 LOGGER.error("DAO_Connect null/ID = " + id);
                 return null;
@@ -273,35 +230,13 @@ public class BtF_Connect implements DBS_Connect {
             int roleDel = 0;
 
             switch (newRole) {
-                case 5:
-                    if ((role & 0x10) != 0x08) roleAdd |= 0x10;
-                    if ((role & 0x08) != 0x08) roleAdd |= 0x08;
-                    if ((role & 0x04) != 0x04) roleAdd |= 0x04;
-                    if ((role & 0x02) != 0x02) roleAdd |= 0x02;
-                    if ((role & 0x01) != 0x01) roleAdd |= 0x01;
-                    break;
-
-                case 4:
-                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
-
-                    if ((role & 0x08) != 0x08) roleAdd |= 0x08;
-                    if ((role & 0x04) != 0x04) roleAdd |= 0x04;
-                    if ((role & 0x02) != 0x02) roleAdd |= 0x02;
-                    if ((role & 0x01) != 0x01) roleAdd |= 0x01;
-                    break;
-
                 case 3:
-                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
-                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
-
                     if ((role & 0x04) != 0x04) roleAdd |= 0x04;
                     if ((role & 0x02) != 0x02) roleAdd |= 0x02;
                     if ((role & 0x01) != 0x01) roleAdd |= 0x01;
                     break;
 
                 case 2:
-                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
-                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
 
                     if ((role & 0x02) != 0x02) roleAdd |= 0x02;
@@ -309,8 +244,6 @@ public class BtF_Connect implements DBS_Connect {
                     break;
 
                 case 1:
-                    if ((role & 0x10) == 0x10) roleDel |= 0x10;
-                    if ((role & 0x08) == 0x08) roleDel |= 0x08;
                     if ((role & 0x04) == 0x04) roleDel |= 0x04;
                     if ((role & 0x02) == 0x02) roleDel |= 0x02;
 
@@ -338,10 +271,8 @@ public class BtF_Connect implements DBS_Connect {
                 List<DAO_ConnectRole> rolesToDelete = new ArrayList<>();
                 for (DAO_ConnectRole _Objrole : dao_connect.getRoles()) {
                     if ((((roleDel & 0x01) == 0x01) && _Objrole.getRole().equals("ROLE_USER")) ||
-                            (((roleDel & 0x02) == 0x02) && _Objrole.getRole().equals("ROLE_MEMBER")) ||
-                            (((roleDel & 0x04) == 0x04) && _Objrole.getRole().equals("ROLE_CUSTOMER")) ||
-                            (((roleDel & 0x08) == 0x08) && _Objrole.getRole().equals("ROLE_MANAGER")) ||
-                            (((roleDel & 0x10) == 0x10) && _Objrole.getRole().equals("ROLE_ADMIN"))) {
+                            (((roleDel & 0x02) == 0x02) && _Objrole.getRole().equals("ROLE_MANAGER")) ||
+                            (((roleDel & 0x04) == 0x04) && _Objrole.getRole().equals("ROLE_ADMIN"))) {
 
                         if (trace) LOGGER.warn("Del Role:" + _Objrole.toString());
                         repo_connectRole.deleteById(_Objrole.getId());
@@ -363,18 +294,11 @@ public class BtF_Connect implements DBS_Connect {
                     dao_connect.addRole(new DAO_ConnectRole("ROLE_USER"));
                 }
                 if ((roleAdd & 0x02) == 0x02) {
-                    dao_connect.addRole(new DAO_ConnectRole("ROLE_MEMBER"));
-                }
-                if ((roleAdd & 0x04) == 0x04) {
-                    dao_connect.addRole(new DAO_ConnectRole("ROLE_CUSTOMER"));
-                }
-                if ((roleAdd & 0x08) == 0x08) {
                     dao_connect.addRole(new DAO_ConnectRole("ROLE_MANAGER"));
                 }
-                if ((roleAdd & 0x10) == 0x10) {
+                if ((roleAdd & 0x04) == 0x04) {
                     dao_connect.addRole(new DAO_ConnectRole("ROLE_ADMIN"));
                 }
-
                 role |= roleAdd;
             }
 
@@ -400,7 +324,7 @@ public class BtF_Connect implements DBS_Connect {
             return new Reponse(HttpStatus.NOT_FOUND, "ERROR delete object null");
 
         try {
-            DAO_Connect dao_connect = getConnect_DAO_ByIdFront(idFront);
+            DAO_Connect dao_connect = getDAO_ByIdFront(idFront);
             if (dao_connect == null)
                 return new Reponse(HttpStatus.NOT_FOUND,"BtF_Connect/delete/error");
 

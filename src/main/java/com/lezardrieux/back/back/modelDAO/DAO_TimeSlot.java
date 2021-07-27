@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import java.util.Date;
 
-
 @Entity
 @Table(name = "timeslot")
 public class DAO_TimeSlot {
@@ -30,7 +29,7 @@ public class DAO_TimeSlot {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    private DAO_Member member;
+    private DAO_Resa resa;
 
     //---------------------------------------------------//
     // CONSTRUCTOR without Jointures
@@ -73,6 +72,8 @@ public class DAO_TimeSlot {
         return this;
     }
 
+    //---------------------------------------------------//
+
     public DAO_Place getPlace() {
         return place;
     }
@@ -82,19 +83,20 @@ public class DAO_TimeSlot {
         return this;
     }
 
-    public DAO_Member getMember() {
-        return member;
+    //---------------------------------------------------//
+
+    public DAO_Resa getResa() {
+        return resa;
     }
 
-    public DAO_TimeSlot setMember(DAO_Member member) {
-        this.member = member;
+    public DAO_TimeSlot setResa(DAO_Resa resa) {
+        this.resa = resa;
         return this;
     }
 
     //---------------------------------------------------//
     // TO STRING  without Jointures
     //---------------------------------------------------//
-
 
     @Override
     public String toString() {

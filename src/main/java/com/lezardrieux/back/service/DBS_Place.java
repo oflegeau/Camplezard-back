@@ -10,10 +10,12 @@ public interface DBS_Place {
 
     DAO_Place getBack(Place obj);
 
-    Place getPlace_ById(String id);
-    DAO_Place getPlace_DAO_ById(String id);
+    Place get(String id);
+    DAO_Place getDAO(String id);
 
-    List<Place> getPlace_List();
+    List<Place> getList();
 
-    PagePlace getPlace_Page(int zone);
+    PagePlace getPage(int zone);
+
+    void create();
 }
