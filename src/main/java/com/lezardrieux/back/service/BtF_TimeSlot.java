@@ -28,8 +28,7 @@ public class BtF_TimeSlot implements DBS_TimeSlot {
 
     //------------------------------------------------------------------------------//
 
-    @Override
-    public DAO_TimeSlot getBack(TimeSlot obj) {
+    private DAO_TimeSlot getBack(TimeSlot obj) {
         return new DAO_TimeSlot(obj.getDay(),
                                 obj.getStatus());
     }
@@ -46,7 +45,7 @@ public class BtF_TimeSlot implements DBS_TimeSlot {
 
     @Override
     @Transactional
-    public TimeSlot getTimeSlot_ById(Long id) {
+    public TimeSlot get(Long id) {
         Optional<DAO_TimeSlot> option = repo_timeSlot.findById(id);
         return option.map(this::getFront).orElse(null);
     }
@@ -55,7 +54,7 @@ public class BtF_TimeSlot implements DBS_TimeSlot {
 
     @Override
     @Transactional
-    public DAO_TimeSlot getTimeSlot_DAO_ById(Long id) {
+    public DAO_TimeSlot getDAO(Long id) {
         Optional<DAO_TimeSlot> option = repo_timeSlot.findById(id);
         return option.orElse(null);
     }
@@ -80,7 +79,7 @@ public class BtF_TimeSlot implements DBS_TimeSlot {
                 LOGGER.error("DAO_Resa null/ID = " + idResa);
                 return null;
             }
-            dao_timeSlot = _parent.addSlot(dao_timeSlot);
+            dao_timeSlot = _parent.addTimeSlot(dao_timeSlot);
             // ----------------------------------------- //
             // gestion des jointures                     //
             // ----------------------------------------- //

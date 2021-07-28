@@ -23,8 +23,7 @@ public class BtF_Place implements DBS_Place {
 
     //------------------------------------------------------------------------------//
 
-    @Override
-    public DAO_Place getBack(Place obj) {
+    private DAO_Place getBack(PlaceCard obj) {
         return new DAO_Place(obj.getCode().substring(0, Math.min(10, obj.getCode().length())),
                              obj.getType(),
                              obj.getComment().substring(0, Math.min(64, obj.getComment().length())),
@@ -40,29 +39,63 @@ public class BtF_Place implements DBS_Place {
 
     //------------------------------------------------------------------------------//
 
-    private Place getFront(DAO_Place obj) {
+    private Place getPlace(DAO_Place obj) {
         return new Place(obj.getId().toString(),
                         obj.getCode(),
-                        obj.getType(),
-                        obj.getComment(),
-                        obj.getLine(),
-                        obj.getZone(),
-                        obj.getStatus(),
-                        obj.getFamous(),
-                        obj.getPrice(),
-                        obj.isVan(),
-                        obj.isWater(),
-                        obj.isElect());
+                        obj.getType());
+    }
+
+    //------------------------------------------------------------------------------//
+
+    private PlaceCard getPlaceCard(DAO_Place obj) {
+        return new PlaceCard(obj.getId().toString(),
+                            obj.getCode(),
+                            obj.getType(),
+                            obj.getComment(),
+                            obj.getLine(),
+                            obj.getZone(),
+                            obj.getStatus(),
+                            obj.getFamous(),
+                            obj.getPrice(),
+                            obj.isVan(),
+                            obj.isWater(),
+                            obj.isElect());
+    }
+
+    //------------------------------------------------------------------------------//
+
+    private PlaceSlot getPlaceSlot(DAO_Place obj, String keyMin, String keyMax) {
+        return new PlaceSlot(obj.getId().toString(),
+                            obj.getCode(),
+                            obj.getType(),
+                            obj.getComment(),
+                            obj.getLine(),
+                            obj.getZone(),
+                            obj.getStatus(),
+                            obj.getFamous(),
+                            obj.getPrice(),
+                            obj.isVan(),
+                            obj.isWater(),
+                            obj.isElect(),
+                            null);
     }
 
     //------------------------------------------------------------------------------//
 
     @Override
     @Transactional
-    public Place get(String id) {
+    public PlaceCard get(String id) {
         if (id.equals("")) return null;
         Optional<DAO_Place> option = repo_place.findById(UUID.fromString(id));
-        return option.map(this::getFront).orElse(null);
+        return option.map(this::getPlaceCard).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public PlaceSlot get(String id, String keyMin, String keyMax) {
+        if (id.equals("")) return null;
+        Optional<DAO_Place> option = repo_place.findById(UUID.fromString(id));
+        return option.map(dao -> getPlaceSlot(dao, keyMin, keyMax)).orElse(null);
     }
 
     //------------------------------------------------------------------------------//
@@ -83,7 +116,18 @@ public class BtF_Place implements DBS_Place {
         List<DAO_Place> _TList = repo_place.findAll();
         List<Place> _List = new ArrayList<>();
         for (DAO_Place _TObj : _TList) {
-            _List.add(getFront(_TObj));
+            _List.add(getPlace(_TObj));
+        }
+        return _List;
+    }
+
+    @Override
+    @Transactional
+    public List<PlaceCard> getList_Card() {
+        List<DAO_Place> _TList = repo_place.findAll();
+        List<PlaceCard> _List = new ArrayList<>();
+        for (DAO_Place _TObj : _TList) {
+            _List.add(getPlaceCard(_TObj));
         }
         return _List;
     }
@@ -111,10 +155,10 @@ public class BtF_Place implements DBS_Place {
 
         List<DAO_Place> _TList  = repo_place.findAllByZone(zone+1);
         int numberElement = _TList.size();
-        List<Place> _List = new ArrayList<>();
+        List<PlaceCard> _List = new ArrayList<>();
 
         for (DAO_Place _TObj : _TList) {
-            _List.add(getFront(_TObj));
+            _List.add(getPlaceCard(_TObj));
         }
 
         return new PagePlace(  _List,

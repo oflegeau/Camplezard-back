@@ -6,11 +6,8 @@ import com.lezardrieux.back.front.model.TimeSlot;
 
 public interface DBS_TimeSlot {
 
-    DAO_TimeSlot getBack(TimeSlot obj);
-
-    TimeSlot getTimeSlot_ById(Long id);
-
-    DAO_TimeSlot getTimeSlot_DAO_ById(Long id);
+    TimeSlot get(Long id);
+    DAO_TimeSlot getDAO(Long id);
 
     DAO_TimeSlot create(String idResa, String idPlace, TimeSlot obj);
 

@@ -31,31 +31,38 @@ public class BtF_Resa implements DBS_Resa {
     //------------------------------------------------------------------------------//
 
     private DAO_Resa getBack(Resa obj) {
-        return new DAO_Resa(obj.getStart(),
-                            obj.getEnd(),
+        return new DAO_Resa(obj.getStartDate(),
+                            obj.getEndDate(),
+                            obj.getDays(),
                             obj.isIdentity(),
+                            obj.getIdentityType().substring(0, Math.min(30, obj.getIdentityType().length())),
+                            obj.getIdentityNum().substring(0, Math.min(30, obj.getIdentityNum().length())),
                             obj.isAnimals(),
                             obj.isGarage(),
                             obj.isVan(),
                             obj.isCar(),
-                            obj.getComment());
+                            obj.isElect(),
+                            obj.getComment().substring(0, Math.min(255, obj.getComment().length())));
     }
 
     //------------------------------------------------------------------------------//
 
     private Resa getFront(DAO_Resa obj) {
         return new Resa(obj.getId().toString(),
-                        obj.getStart(),
-                        obj.getEnd(),
+                        obj.getStartDate(),
+                        obj.getEndDate(),
+                        obj.getDays(),
                         obj.isIdentity(),
+                        obj.getIdentityType(),
+                        obj.getIdentityNum(),
                         obj.isAnimals(),
                         obj.isGarage(),
                         obj.isVan(),
                         obj.isCar(),
+                        obj.isElect(),
                         obj.getComment(),
-                        null,
-                        null,
-                        null);
+                        dbs_memberWith.getList(obj.getMemberWiths()),
+                        dbs_invoice.getList(obj.getInvoices()));
     }
 
     //------------------------------------------------------------------------------//
@@ -137,13 +144,16 @@ public class BtF_Resa implements DBS_Resa {
             // mise à jour                               //
             // ----------------------------------------- //
             dao_resa = dao_resa
-                    .setStart(obj.getStart())
-                    .setEnd(obj.getEnd())
+                    .setStartDate(obj.getStartDate())
+                    .setEndDate(obj.getEndDate())
                     .setIdentity(obj.isIdentity())
+                    .setIdentityType(obj.getIdentityType().substring(0, Math.min(30, obj.getIdentityType().length())))
+                    .setIdentityNum(obj.getIdentityNum().substring(0, Math.min(30, obj.getIdentityNum().length())))
                     .setAnimals(obj.isAnimals())
                     .setGarage(obj.isGarage())
                     .setVan(obj.isVan())
                     .setCar(obj.isCar())
+                    .setElect(obj.isElect())
                     .setComment(obj.getComment().substring(0, Math.min(255, obj.getComment().length())));
 
             // ----------------------------------------- //
@@ -221,11 +231,11 @@ public class BtF_Resa implements DBS_Resa {
 
             // ----------------------------------------- //
 
-            for (Iterator<DAO_TimeSlot> iter = dao_resa.getSlots().listIterator(); iter.hasNext(); ) {
+            for (Iterator<DAO_TimeSlot> iter = dao_resa.getTimeSlots().listIterator(); iter.hasNext(); ) {
                 DAO_TimeSlot dao_timeSlot = iter.next();
 
                 // détruit la jointure //
-                dao_resa.detachSlot(dao_timeSlot);
+                dao_resa.detachTimeSlot(dao_timeSlot);
                 // détruit l'objet //
                 dbs_timeSlot.delete(dao_timeSlot.getId());
 

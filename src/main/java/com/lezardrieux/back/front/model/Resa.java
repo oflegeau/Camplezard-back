@@ -7,33 +7,39 @@ import java.util.List;
 public class Resa {
 
     private String id;
-    private Date start;
-    private Date end;
+    private Date startDate;
+    private Date endDate;
+    private int days;
 
     private boolean identity;
+    private String identityType;
+    private String identityNum;
     private boolean animals;
     private boolean garage;
     private boolean van;
     private boolean car;
+    private boolean elect;
     private String comment;
 
     private List<MemberWith> memberWiths;
-    private List<TimeSlot> timeSlots;
     private List<Invoice> invoices;
 
     public Resa() {}
-    public Resa(String id, Date start, Date end, boolean identity, boolean animals, boolean garage, boolean van, boolean car, String comment, List<MemberWith> memberWiths, List<TimeSlot> timeSlots, List<Invoice> invoices) {
+    public Resa(String id, Date startDate, Date endDate, int days, boolean identity, String identityType, String identityNum, boolean animals, boolean garage, boolean van, boolean car, boolean elect, String comment, List<MemberWith> memberWiths, List<Invoice> invoices) {
         this.id = id;
-        this.start = start;
-        this.end = end;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.days = days;
         this.identity = identity;
+        this.identityType = identityType;
+        this.identityNum = identityNum;
         this.animals = animals;
         this.garage = garage;
         this.van = van;
         this.car = car;
+        this.elect = elect;
         this.comment = comment;
         this.memberWiths = memberWiths;
-        this.timeSlots = timeSlots;
         this.invoices = invoices;
     }
 
@@ -41,16 +47,20 @@ public class Resa {
         return id;
     }
 
-    public Date getStart() {
-        return start;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public Date getEnd() {
-        return end;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public List<TimeSlot> getTimeSlots() {
-        return timeSlots;
+    public int getDays() {
+        return days;
+    }
+
+    public boolean isElect() {
+        return elect;
     }
 
     public List<Invoice> getInvoices() {
@@ -59,6 +69,14 @@ public class Resa {
 
     public boolean isIdentity() {
         return identity;
+    }
+
+    public String getIdentityType() {
+        return identityType;
+    }
+
+    public String getIdentityNum() {
+        return identityNum;
     }
 
     public boolean isAnimals() {
@@ -89,8 +107,8 @@ public class Resa {
     public String toString() {
         return "Resa{" +
                 "id='" + id + '\'' +
-                ", start=" + start +
-                ", end=" + end +
+                ", start=" + startDate +
+                ", end=" + endDate +
                 '}';
     }
 }

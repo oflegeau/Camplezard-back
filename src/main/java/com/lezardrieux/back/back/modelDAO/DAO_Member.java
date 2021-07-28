@@ -24,6 +24,8 @@ public class DAO_Member {
     private String photo;
     @Column(name = "created")                                         // created Firebase
     private Date created;
+    @Column(name = "here")
+    private boolean here;
 
     @Column(name = "email", length = 128, nullable = false)         // email Firebase
     private String email;
@@ -68,11 +70,12 @@ public class DAO_Member {
     //---------------------------------------------------//
 
     public DAO_Member() {}
-    public DAO_Member(String name, String surname, String photo, Date created, String email, String phone, int nation, Date birthday, String birthdayCity, String profession, boolean sex, String address, String code, String city, String carType, String carNumber, String comment) {
+    public DAO_Member(String name, String surname, String photo, Date created, boolean here, String email, String phone, int nation, Date birthday, String birthdayCity, String profession, boolean sex, String address, String code, String city, String carType, String carNumber, String comment) {
         this.name = name;
         this.surname = surname;
         this.photo = photo;
         this.created = created;
+        this.here = here;
         this.email = email;
         this.phone = phone;
         this.nation = nation;
@@ -87,7 +90,7 @@ public class DAO_Member {
         this.carNumber = carNumber;
         this.comment = comment;
     }
-    //---------------------------------------------------//
+//---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
 
@@ -117,6 +120,15 @@ public class DAO_Member {
 
     public DAO_Member setPhoto(String photo) {
         this.photo = photo;
+        return this;
+    }
+
+    public boolean isHere() {
+        return here;
+    }
+
+    public DAO_Member setHere(boolean here) {
+        this.here = here;
         return this;
     }
 
@@ -326,7 +338,8 @@ public class DAO_Member {
                                 this.city,
                                 this.carType,
                                 this.carNumber,
-                                this.comment);
+                                this.comment,
+                                this.here);
     }
 
 }

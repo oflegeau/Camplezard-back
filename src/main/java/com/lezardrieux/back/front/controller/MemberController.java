@@ -66,6 +66,19 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(entity);
     }
 
+    // MemberData //
+    @GetMapping(value = "/{id}/resa")
+    @PreAuthorize(value = "hasRole('MANAGER')")
+    public ResponseEntity<MemberResa> getMemberData(@PathVariable String id) {
+
+        LOGGER.info("GET............/member/" + id + "/resa");
+
+        var entity = dbs_member.get_Resa(id);
+        if (entity == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(entity);
+    }
+
     // ---------------------------------------------------------------------------------------------- //
     // ---------------------------------------------------------------------------------------------- //
     //
@@ -75,7 +88,7 @@ public class MemberController {
     // ---------------------------------------------------------------------------------------------- //
 
     @PostMapping(value = "/create")
-    @PreAuthorize(value = "hasRole('ADMIN')")
+    @PreAuthorize(value = "hasRole('MANAGER')")
     public ResponseEntity<Reponse> createMember(@RequestBody(required = true) MemberCard obj) {
 
         LOGGER.info("POST............/member/create");

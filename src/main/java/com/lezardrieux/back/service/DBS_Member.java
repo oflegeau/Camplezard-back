@@ -12,9 +12,9 @@ public interface DBS_Member {
     Member get(String id);
     MemberPhoto get_Photo(String id);
     MemberCard get_Card(String id);
+    MemberResa get_Resa(String id);
 
     // Back Object //
-    DAO_Member getBack(MemberCard obj);
     DAO_Member getDAO(String id);
 
     // Back List of Object //

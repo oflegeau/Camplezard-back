@@ -18,13 +18,14 @@ public class MemberCard extends MemberPhoto {
     private String carType;
     private String carNumber;
     private String comment;
+    private boolean here;
 
     //---------------------------------------------------//
     // CONSTRUCTOR
     //---------------------------------------------------//
 
     public MemberCard() {}
-    public MemberCard(String id, String name, String surname, String photo, Date created, String email, String phone, int nation, Date birthday, String birthdayCity, String profession, boolean sex, String address, String code, String city, String carType, String carNumber, String comment) {
+    public MemberCard(String id, String name, String surname, String photo, Date created, String email, String phone, int nation, Date birthday, String birthdayCity, String profession, boolean sex, String address, String code, String city, String carType, String carNumber, String comment, boolean here) {
         super(id, name, surname, photo, created);
         this.email = email;
         this.phone = phone;
@@ -39,7 +40,9 @@ public class MemberCard extends MemberPhoto {
         this.carType = carType;
         this.carNumber = carNumber;
         this.comment = comment;
+        this.here = here;
     }
+
     //---------------------------------------------------//
     // GET
     //---------------------------------------------------//
@@ -94,6 +97,10 @@ public class MemberCard extends MemberPhoto {
 
     public String getComment() {
         return comment;
+    }
+
+    public boolean isHere() {
+        return here;
     }
 
     //---------------------------------------------------//

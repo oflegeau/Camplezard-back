@@ -4,7 +4,7 @@ import java.util.List;
 
 public class PagePlace {
 
-    List<Place> items;
+    List<PlaceCard> items;
     int indexPage;
     int itemPerPage;
     boolean firstPage;
@@ -12,7 +12,7 @@ public class PagePlace {
     int totalPage;
     private int[] type;
 
-    public PagePlace(List<Place> items, int indexPage, int itemPerPage, boolean firstPage, boolean lastPage, int totalPage, int[] type) {
+    public PagePlace(List<PlaceCard> items, int indexPage, int itemPerPage, boolean firstPage, boolean lastPage, int totalPage, int[] type) {
         this.items = items;
         this.indexPage = indexPage;
         this.itemPerPage = itemPerPage;
@@ -22,7 +22,7 @@ public class PagePlace {
         this.type = type;
     }
 
-    public List<Place> getItems() {
+    public List<PlaceCard> getItems() {
         return items;
     }
 

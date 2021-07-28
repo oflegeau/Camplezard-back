@@ -17,13 +17,20 @@ public class DAO_Resa {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "start")
-    private Date start;
-    @Column(name = "end")
-    private Date end;
+    @Column(name = "startDate")
+    private Date startDate;
+    @Column(name = "endDate")
+    private Date endDate;
+    @Column(name = "days")
+    private int days;
 
     @Column(name = "identity")
     private boolean identity;
+    @Column(name = "identity_type", length = 30)
+    private String identityType;
+    @Column(name = "identity_num", length = 30)
+    private String identityNum;
+
     @Column(name = "animals")
     private boolean animals;
     @Column(name = "garage")
@@ -32,7 +39,8 @@ public class DAO_Resa {
     private boolean van;
     @Column(name = "car")
     private boolean car;
-
+    @Column(name = "elect")
+    private boolean elect;
     @Column(name = "comment", length = 255)
     private String comment;
 
@@ -74,20 +82,25 @@ public class DAO_Resa {
     //---------------------------------------------------//
 
     public DAO_Resa() {}
-    public DAO_Resa(Date start, Date end, boolean identity, boolean animals, boolean garage, boolean van, boolean car, String comment) {
-        this.start = start;
-        this.end = end;
+
+    public DAO_Resa(Date startDate, Date endDate, int days, boolean identity, String identityType, String identityNum, boolean animals, boolean garage, boolean van, boolean car, boolean elect, String comment) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.days = days;
         this.identity = identity;
+        this.identityType = identityType;
+        this.identityNum = identityNum;
         this.animals = animals;
         this.garage = garage;
         this.van = van;
         this.car = car;
+        this.elect = elect;
         this.comment = comment;
     }
+
     //---------------------------------------------------//
     // SIMPLE GETTER SETTER
     //---------------------------------------------------//
-
 
     public UUID getId() {
         return id;
@@ -98,21 +111,21 @@ public class DAO_Resa {
         return this;
     }
 
-    public Date getStart() {
-        return start;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public DAO_Resa setStart(Date start) {
-        this.start = start;
+    public DAO_Resa setStartDate(Date startDate) {
+        this.startDate = startDate;
         return this;
     }
 
-    public Date getEnd() {
-        return end;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public DAO_Resa setEnd(Date end) {
-        this.end = end;
+    public DAO_Resa setEndDate(Date endDate) {
+        this.endDate = endDate;
         return this;
     }
 
@@ -122,6 +135,24 @@ public class DAO_Resa {
 
     public DAO_Resa setIdentity(boolean identity) {
         this.identity = identity;
+        return this;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public DAO_Resa setDays(int days) {
+        this.days = days;
+        return this;
+    }
+
+    public boolean isElect() {
+        return elect;
+    }
+
+    public DAO_Resa setElect(boolean elect) {
+        this.elect = elect;
         return this;
     }
 
@@ -158,6 +189,24 @@ public class DAO_Resa {
 
     public DAO_Resa setCar(boolean car) {
         this.car = car;
+        return this;
+    }
+
+    public String getIdentityType() {
+        return identityType;
+    }
+
+    public DAO_Resa setIdentityType(String identityType) {
+        this.identityType = identityType;
+        return this;
+    }
+
+    public String getIdentityNum() {
+        return identityNum;
+    }
+
+    public DAO_Resa setIdentityNum(String identityNum) {
+        this.identityNum = identityNum;
         return this;
     }
 
@@ -209,25 +258,25 @@ public class DAO_Resa {
 
     //---------------------------------------------------//
 
-    public List<DAO_TimeSlot> getSlots() {
+    public List<DAO_TimeSlot> getTimeSlots() {
         return timeSlots;
     }
 
-    public DAO_Resa setSlots(List<DAO_TimeSlot> slots) {
-        this.timeSlots = slots;
+    public DAO_Resa setTimeSlots(List<DAO_TimeSlot> timeSlots) {
+        this.timeSlots = timeSlots;
         return this;
     }
 
-    public DAO_TimeSlot addSlot(DAO_TimeSlot Tobj) {
+    public DAO_TimeSlot addTimeSlot(DAO_TimeSlot Tobj) {
         timeSlots.add(Tobj);
         Tobj.setResa(this);
         return Tobj;
     }
-    public DAO_TimeSlot detachSlot(DAO_TimeSlot Tobj) {
+    public DAO_TimeSlot detachTimeSlot(DAO_TimeSlot Tobj) {
         Tobj.setResa(null);
         return Tobj;
     }
-    public DAO_TimeSlot removeSlot(DAO_TimeSlot Tobj) {
+    public DAO_TimeSlot removeTimeSlot(DAO_TimeSlot Tobj) {
         timeSlots.remove(Tobj);
         Tobj.setResa(null);
         return Tobj;
@@ -267,8 +316,8 @@ public class DAO_Resa {
     public String toString() {
         return "DAO_Resa{" +
                 "id=" + id +
-                ", start=" + start +
-                ", end=" + end +
+                ", start=" + startDate +
+                ", end=" + endDate +
                 '}';
     }
 }

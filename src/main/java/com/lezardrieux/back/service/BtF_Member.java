@@ -1,7 +1,6 @@
 package com.lezardrieux.back.service;
 
 import com.lezardrieux.back.back.modelDAO.DAO_Member;
-import com.lezardrieux.back.back.repoDAO.Repo_Connect;
 import com.lezardrieux.back.back.repoDAO.Repo_Member;
 import com.lezardrieux.back.front.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +23,18 @@ public class BtF_Member implements DBS_Member {
     @Autowired
     Repo_Member repo_member;
     @Autowired
-    Repo_Connect repo_connect;
-
-    @Autowired
     DBS_Connect dbs_connect;
     @Autowired
-    DBS_MemberWith dbs_memberWith;
+    DBS_Resa dbs_resa;
 
     //------------------------------------------------------------------------------//
 
-    @Override
-    public DAO_Member getBack(MemberCard obj) {
+    private DAO_Member getBack(MemberCard obj) {
         return new DAO_Member(  obj.getName().substring(0, Math.min(20, obj.getName().length())),
                                 obj.getSurname().substring(0, Math.min(20, obj.getSurname().length())),
                                 obj.getMemberPhoto().getPhoto(),
                                 obj.getMemberPhoto().getCreated(),
+                                obj.isHere(),
                                 obj.getEmail().substring(0, Math.min(128, obj.getEmail().length())),
                                 obj.getPhone().substring(0, Math.min(14, obj.getPhone().length())),
                                 obj.getNation(),
@@ -54,7 +50,7 @@ public class BtF_Member implements DBS_Member {
                                 obj.getComment().substring(0, Math.min(255, obj.getComment().length())));
     }
 
-    public MemberResa get_MemberResa(DAO_Member obj) {
+    private MemberResa getMemberResa(DAO_Member obj) {
         return new MemberResa(  obj.getId().toString(),
                                 obj.getName(),
                                 obj.getSurname(),
@@ -73,7 +69,8 @@ public class BtF_Member implements DBS_Member {
                                 obj.getCarType(),
                                 obj.getCarNumber(),
                                 obj.getComment(),
-                                null);
+                                obj.isHere(),
+                                dbs_resa.getList(obj.getResas()));
     }
 
     //------------------------------------------------------------------------------//
@@ -100,6 +97,14 @@ public class BtF_Member implements DBS_Member {
         if (id.equals("")) return null;
         Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
         return option.map(DAO_Member::getMemberCard).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public MemberResa get_Resa(String id) {
+        if (id.equals("")) return null;
+        Optional<DAO_Member> option = repo_member.findById(UUID.fromString(id));
+        return option.map(this::getMemberResa).orElse(null);
     }
 
     //------------------------------------------------------------------------------//
